@@ -9,7 +9,7 @@ import { store } from "@/store";
 import { auth } from "@/services/firebase";
 import { setUser } from "@/store/slices/authSlice";
 
-import { GlobalLoader } from "@/components/GlobalLoader";
+import { GlobalLoader } from "../components/GlobalLoader";
 
 const RootLayoutContent = () => {
   const insets = useSafeAreaInsets();
