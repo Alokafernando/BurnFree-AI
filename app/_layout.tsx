@@ -1,66 +1,78 @@
-import React, { useEffect } from "react";
-import { View } from "react-native";
-import { Slot } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Provider, useDispatch } from "react-redux";
-import { onAuthStateChanged } from "firebase/auth";
+// import React, { useEffect } from "react";
+// import { View } from "react-native";
+// import { Slot } from "expo-router";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+// import { Provider, useDispatch } from "react-redux";
+// import { onAuthStateChanged } from "firebase/auth";
 
-// Import Redux store and actions
-import { store } from "@/store";
-import { auth } from "@/services/firebase";
-import { setUser } from "@/store/slices/authSlice";
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-// Import your global UI components
-import { GlobalLoader } from "@/components/GlobalLoader";
+// // Import Redux store and actions
+// import { store } from "@/store";
+// import { auth } from "@/services/firebase";
+// import { setUser } from "@/store/slices/authSlice";
 
-/**
- * Inner component to handle logic that requires access to Redux hooks
- */
-const RootLayoutContent = () => {
-  const insets = useSafeAreaInsets();
-  const dispatch = useDispatch();
+// // Import your global UI components
+// import { GlobalLoader } from "@/components/GlobalLoader";
 
-  useEffect(() => {
-    // 1. Initialize the Firebase Auth Listener
-    const unsubscribe = onAuthStateChanged(auth, (usr) => {
-      if (usr) {
-        // 2. Dispatch plain object to Redux (No functions/complex methods)
-        dispatch(
-          setUser({
-            uid: usr.uid,
-            email: usr.email,
-            displayName: usr.displayName,
-          })
-        );
-      } else {
-        dispatch(setUser(null));
-      }
-    });
+// /**
+//  * Inner component to handle logic that requires access to Redux hooks
+//  */
+// const RootLayoutContent = () => {
+//   const insets = useSafeAreaInsets();
+//   const dispatch = useDispatch();
 
-    // Cleanup listener on unmount
-    return () => unsubscribe();
-  }, [dispatch]);
+//   useEffect(() => {
+//     // 1. Initialize the Firebase Auth Listener
+//     const unsubscribe = onAuthStateChanged(auth, (usr) => {
+//       if (usr) {
+//         // 2. Dispatch plain object to Redux (No functions/complex methods)
+//         dispatch(
+//           setUser({
+//             uid: usr.uid,
+//             email: usr.email,
+//             displayName: usr.displayName,
+//           })
+//         );
+//       } else {
+//         dispatch(setUser(null));
+//       }
+//     });
 
-  return (
-    <View style={{ marginTop: insets.top, flex: 1 }}>
-      {/* Current Screen (app/index.tsx, etc.) */}
-      <Slot />
+//     // Cleanup listener on unmount
+//     return () => unsubscribe();
+//   }, [dispatch]);
 
-      {/* Global Loading Overlay */}
-      <GlobalLoader />
-    </View>
-  );
-};
+//   return (
+//     <View style={{ marginTop: insets.top, flex: 1 }}>
+//       {/* Current Screen (app/index.tsx, etc.) */}
+//       <Slot />
 
-/**
- * Root Layout Component
- */
+//       {/* Global Loading Overlay */}
+//       <GlobalLoader />
+//     </View>
+//   );
+// };
+
+// /**
+//  * Root Layout Component
+//  */
+// const RootLayout = () => {
+//   return (
+//     <Provider store={store}>
+//       <RootLayoutContent />
+//     </Provider>
+//   );
+// };
+
+// export default RootLayout;
+
 const RootLayout = () => {
-  return (
-    <Provider store={store}>
-      <RootLayoutContent />
-    </Provider>
-  );
-};
+  const insets = useSafeAreaInsets()
 
-export default RootLayout;
+  console.log(insets)
+
+  return(
+    
+  )
+}
