@@ -11,7 +11,7 @@ export const registerUser = async (fullname: string, email: string, password: st
         await setDoc(doc(db, "users", userCredentials.user.uid), {
             name: fullname,
             role: "USER",
-            email,
+            email: email.toLowerCase(),
             createAt: new Date()
         })
         return userCredentials.user
