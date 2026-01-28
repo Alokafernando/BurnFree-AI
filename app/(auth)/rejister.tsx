@@ -124,8 +124,11 @@ const Register = () => {
     startLoading()
     try {
       await registerUser(name, email, password, conPassword)
-      Alert.alert("Welcome!", "Your account is ready.")
-      router.replace("/(auth)/login")
+      Alert.alert(
+        "Registration Successful 🎉",
+        "Your account has been created successfully."
+      )
+      router.replace("../app/(auth)/login")
     } catch (e: any) {
       Alert.alert("Wait a second", e.message || "Something went wrong.")
     } finally {
