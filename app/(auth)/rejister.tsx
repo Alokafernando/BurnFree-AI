@@ -208,8 +208,34 @@ const Register = () => {
                   </LinearGradient>
                 </TouchableOpacity>
 
+                {/* Divider */}
+                <View className="flex-row items-center my-6">
+                  <View className="flex-1 h-[1px] bg-slate-100" />
+                  <Text className="mx-4 text-slate-400 font-bold text-[10px] uppercase tracking-widest">
+                    Or join with
+                  </Text>
+                  <View className="flex-1 h-[1px] bg-slate-100" />
+                </View>
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    Alert.alert("Google Sign-In", "Connecting to Google...");
+                  }}
+                  className="py-4 rounded-2xl flex-row justify-center items-center border border-slate-100 bg-slate-50"
+                >
+                  <Image
+                    source={require("@/assets/application/google.png")}
+                    style={{ width: 55, height: 55 }}
+                    resizeMode="contain"
+                  />
+                  <Text className="text-slate-700 font-bold text-base ml-3">
+                    Continue with Google
+                  </Text>
+                </TouchableOpacity>
+
                 <View className="flex-row justify-center items-center mt-4">
-                  <Text className="text-slate-500 font-medium">Joined us before? </Text>
+                  <Text className="text-slate-500 font-medium">Already have an account?</Text>
                   <TouchableOpacity onPress={() => router.back()}>
                     <Text className="text-teal-600 font-extrabold">Log In</Text>
                   </TouchableOpacity>
