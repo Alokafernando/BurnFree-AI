@@ -128,7 +128,7 @@ const Register = () => {
         "Registration Successful 🎉",
         "Your account has been created successfully."
       )
-      router.replace("../app/(auth)/login")
+      router.replace("/(auth)/login")
     } catch (e: any) {
       Alert.alert("Wait a second", e.message || "Something went wrong.")
     } finally {
