@@ -7,42 +7,43 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert
-} from "react-native";
-import React, { useState } from "react";
-import { useRouter } from "expo-router";
-import { useLoader } from "@/hooks/useLoader";
-import { login } from "@/services/authService";
+} from "react-native"
+import React, { useState } from "react"
+import { useRouter } from "expo-router"
+import { useLoader } from "@/hooks/useLoader"
+import { login } from "@/services/authService"
 
 const Login = () => {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
-  const { startLoading, stopLoading, isLoading } = useLoader();
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const { startLoading, stopLoading, isLoading } = useLoader()
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      return Alert.alert("Error", "Please enter both email and password.");
-    }
+  if (!email || !password) {
+    return Alert.alert("Error", "Please enter both email and password.")
+  }
 
-    if (!emailRegex.test(email)) {
-      return Alert.alert("Invalid Email", "Please enter a valid email address.");
-    }
+  if (!emailRegex.test(email)) {
+    return Alert.alert("Invalid Email", "Please enter a valid email address.")
+  }
 
-    if (isLoading) return;
+  if (isLoading) return
 
-    startLoading();
-    try {
-      await login(email, password);
-      router.replace("../app/(dashboard)/home"); 
-    } catch (e: any) {
-      Alert.alert("Login Failed", e.message || "Invalid credentials.");
-    } finally {
-      stopLoading(); 
-    }
-  };
+  startLoading()
+  try {
+    await login(email, password)
+    console.log("Login successful")
+
+    router.replace("/(dashboard)/home")
+  } catch (e: any) {
+    Alert.alert("Login Failed", e.message || "Invalid credentials.")
+  } finally {
+    stopLoading()
+  }
+}
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -68,7 +69,7 @@ const Login = () => {
           <TextInput
             placeholder="Password"
             placeholderTextColor="#9CA3AF"
-            secureTextEntry // Hides characters
+            secureTextEntry
             className="bg-gray-100 p-4 mb-6 rounded-2xl text-gray-900 border border-gray-200"
             value={password}
             onChangeText={setPassword}
@@ -86,14 +87,15 @@ const Login = () => {
 
           <View className="flex-row justify-center mt-6">
             <Text className="text-gray-600">Don't have an account? </Text>
-            <TouchableOpacity onPress={() => router.push("/(auth)/rejister")}>
+            {/* ✅ Stack screen name for register */}
+            <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
               <Text className="text-blue-600 font-bold">Register</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
     </TouchableWithoutFeedback>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
