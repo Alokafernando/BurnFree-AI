@@ -31,7 +31,10 @@ export const login = async (email: string, password: string) => {
 }
 
 export const logoutUser = async () => {
-  await signOut(auth)
-  AsyncStorage.clear()
-  return
+  try {
+    await signOut(auth)
+    await AsyncStorage.clear()
+  } catch (error) {
+    console.error("Logout failed:", error)
+  }
 }
