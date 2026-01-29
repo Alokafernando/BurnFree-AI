@@ -57,7 +57,7 @@ const Login = () => {
       router.replace("/home")
 
     } catch (e: any) {
-      Alert.alert("Login Failed", e.message || "Invalid credentials.")
+      Alert.alert("Login Failed", "Invalid credentials provided")
     } finally {
       stopLoading()
     }
