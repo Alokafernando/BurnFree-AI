@@ -76,14 +76,15 @@ const Register = () => {
             <View className="px-6 pt-16 pb-10">
 
               {/* Branding Section */}
-              <View className="items-center mb-8">
-                <View className="w-16 h-16 bg-white rounded-3xl items-center justify-center shadow-sm border border-teal-100">
-                  <FontAwesome5 name="fire-extinguisher" size={28} color="#0D9488" />
-                </View>
-                <Text className="text-3xl font-black text-slate-900 mt-4 tracking-tighter">
-                  BurnFree <Text className="text-teal-600">AI</Text>
+              <View className="items-center mb-10">
+                <Text className="text-3xl font-black text-slate-900 tracking-tight text-center">
+                  Join <Text className="text-teal-600">BurnFree-AI</Text>
+                </Text>
+                <Text className="text-slate-500 mt-2 font-medium text-center px-6 leading-6">
+                  Create your account to start managing your AI-powered safety dashboard
                 </Text>
               </View>
+
 
               {/* Main Form Container */}
               <View className="bg-white rounded-[40px] p-8 shadow-xl shadow-slate-200 border border-white" style={{ elevation: 10 }}>
