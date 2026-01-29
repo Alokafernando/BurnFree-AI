@@ -1,78 +1,135 @@
-import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { auth } from "@/services/firebase"; // Import your auth to handle logout
+import React from "react"
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { useRouter } from "expo-router"
 
 export default function Profile() {
-  const router = useRouter();
-  const user = auth.currentUser;
-
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      router.replace("/(auth)/login");
-    } catch (error) {
-      console.error("Logout Error:", error);
-    }
-  };
+  const router = useRouter()
 
   return (
-    <View className="flex-1 bg-slate-50">
-      <LinearGradient colors={["#F0FDFA", "#EFF6FF"]} className="absolute w-full h-full" />
-      
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="px-6 pt-16">
-        {/* Header Area */}
-        <View className="items-center mb-8">
-          <View className="relative">
-            <View className="w-32 h-32 rounded-[40px] bg-white shadow-xl shadow-slate-200 items-center justify-center border border-white">
-              <MaterialCommunityIcons name="account" size={80} color="#0D9488" />
-            </View>
-            <TouchableOpacity className="absolute bottom-0 right-0 bg-teal-600 w-10 h-10 rounded-2xl items-center justify-center border-4 border-slate-50">
-              <MaterialCommunityIcons name="camera" size={18} color="white" />
-            </TouchableOpacity>
+    <View className="flex-1">
+      {/* Background */}
+      <LinearGradient
+        colors={["#F0FDFA", "#ECFEFF"]}
+        className="absolute inset-0"
+      />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {/* Header */}
+        <View className="px-6 pt-16 items-center">
+          <View className="w-28 h-28 rounded-full bg-white shadow-lg shadow-slate-200 items-center justify-center">
+            <MaterialCommunityIcons name="account" size={64} color="#0D9488" />
           </View>
-          
-          <Text className="text-2xl font-black text-slate-900 mt-6">
-            {user?.displayName || "User Name"}
+
+          <Text className="text-2xl font-black text-slate-900 mt-4">
+            Buddhika Fernando
           </Text>
-          <Text className="text-slate-500 font-medium">{user?.email}</Text>
+          <Text className="text-slate-500 font-medium mt-1">
+            user@burnfree.ai
+          </Text>
         </View>
 
-        {/* Action List */}
-        <View className="bg-white rounded-[40px] p-6 shadow-2xl shadow-slate-200 border border-white">
-          <ProfileMenuItem icon="account-edit-outline" title="Edit Profile" />
-          <ProfileMenuItem icon="shield-lock-outline" title="Security" />
-          <ProfileMenuItem icon="bell-outline" title="Notifications" />
-          <ProfileMenuItem icon="help-circle-outline" title="Help Center" />
-          
-          <View className="h-[1px] bg-slate-100 my-4 mx-4" />
-
-          <TouchableOpacity 
-            onPress={handleLogout}
-            className="flex-row items-center p-4 rounded-2xl bg-red-50"
-          >
-            <MaterialCommunityIcons name="logout" size={24} color="#EF4444" />
-            <Text className="ml-4 text-red-500 font-black text-base">Logout</Text>
-          </TouchableOpacity>
+        {/* Info Card */}
+        <View className="mx-6 mt-10 bg-white rounded-3xl p-6 shadow-xl shadow-slate-200">
+          <ProfileRow icon="account-outline" label="Full Name" value="Buddhika Fernando" />
+          <ProfileRow icon="email-outline" label="Email" value="user@burnfree.ai" />
+          <ProfileRow icon="shield-account-outline" label="Role" value="USER" />
         </View>
 
-        <Text className="text-center text-slate-300 mt-8 font-bold text-xs uppercase tracking-widest">
-          App Version 1.0.0
-        </Text>
+        {/* Actions */}
+        <View className="mx-6 mt-8 space-y-4">
+          <ActionButton
+            icon="lock-reset"
+            title="Change Password"
+            onPress={() => router.push("/(auth)/forgot-password")}
+          />
+
+          <ActionButton
+            icon="cog-outline"
+            title="Settings"
+            onPress={() => {}}
+          />
+
+          <ActionButton
+            icon="logout"
+            title="Logout"
+            danger
+            onPress={() => {
+              // call logoutUser()
+              router.replace("/(auth)/login")
+            }}
+          />
+        </View>
       </ScrollView>
     </View>
-  );
+  )
 }
 
-// Helper Component for Menu Items
-const ProfileMenuItem = ({ icon, title }: { icon: any; title: string }) => (
-  <TouchableOpacity className="flex-row items-center p-4 mb-2 rounded-2xl active:bg-slate-50">
-    <View className="w-10 h-10 rounded-xl bg-teal-50 items-center justify-center">
-      <MaterialCommunityIcons name={icon} size={22} color="#0D9488" />
+/* -----------------------------------
+   COMPONENTS
+----------------------------------- */
+
+const ProfileRow = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: any
+  label: string
+  value: string
+}) => (
+  <View className="flex-row items-center py-4 border-b border-slate-100 last:border-b-0">
+    <MaterialCommunityIcons name={icon} size={22} color="#0D9488" />
+    <View className="ml-4">
+      <Text className="text-xs text-slate-400 font-bold uppercase tracking-wide">
+        {label}
+      </Text>
+      <Text className="text-base text-slate-900 font-semibold mt-1">
+        {value}
+      </Text>
     </View>
-    <Text className="flex-1 ml-4 text-slate-700 font-bold text-base">{title}</Text>
-    <MaterialCommunityIcons name="chevron-right" size={24} color="#cbd5e1" />
+  </View>
+)
+
+const ActionButton = ({
+  icon,
+  title,
+  onPress,
+  danger,
+}: {
+  icon: any
+  title: string
+  onPress: () => void
+  danger?: boolean
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    activeOpacity={0.85}
+    className={`flex-row items-center justify-between px-6 py-4 rounded-2xl bg-white shadow-lg shadow-slate-200`}
+  >
+    <View className="flex-row items-center">
+      <MaterialCommunityIcons
+        name={icon}
+        size={22}
+        color={danger ? "#ef4444" : "#0D9488"}
+      />
+      <Text
+        className={`ml-4 font-bold ${
+          danger ? "text-red-500" : "text-slate-900"
+        }`}
+      >
+        {title}
+      </Text>
+    </View>
+
+    <MaterialCommunityIcons
+      name="chevron-right"
+      size={22}
+      color="#94a3b8"
+    />
   </TouchableOpacity>
-);
+)
