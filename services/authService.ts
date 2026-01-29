@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth"
 import { auth, db } from "./firebase"
 import { doc, setDoc } from "firebase/firestore"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -36,5 +36,15 @@ export const logoutUser = async () => {
     await AsyncStorage.clear()
   } catch (error) {
     console.error("Logout failed:", error)
+  }
+}
+
+export const isEmailRegistered = async (email: string): Promise<boolean> => {
+  try {
+    const methods = await fetchSignInMethodsForEmail(auth, email)
+    return methods.length > 0
+  } catch (error) {
+    console.error("Error checking email:", error)
+    return false
   }
 }
