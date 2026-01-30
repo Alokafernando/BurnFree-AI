@@ -1,8 +1,11 @@
 import {
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
   fetchSignInMethodsForEmail,
+  reauthenticateWithCredential,
   signInWithEmailAndPassword,
   signOut,
+  updatePassword,
   updateProfile,
   User,
 } from "firebase/auth";
@@ -62,6 +65,31 @@ export const logoutUser = async (): Promise<boolean> => {
   } catch (error) {
     console.error("Logout failed:", error);
     return false;
+  }
+};
+
+
+export const changePasswordWithCurrent = async (
+  currentPassword: string,
+  newPassword: string
+): Promise<boolean> => {
+  try {
+    const user = auth.currentUser;
+    if (!user || !user.email) throw new Error("No user logged in");
+
+    const credential = EmailAuthProvider.credential(
+      user.email,
+      currentPassword
+    );
+
+    await reauthenticateWithCredential(user, credential);
+
+    await updatePassword(user, newPassword);
+
+    return true;
+  } catch (error: any) {
+    console.error("Change password error:", error);
+    throw error;
   }
 };
 

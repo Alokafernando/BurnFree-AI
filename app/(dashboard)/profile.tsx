@@ -175,7 +175,7 @@ export default function Profile() {
           <Text className="text-slate-900 font-black text-lg mb-2 ml-1">Account & Security</Text>
           <View className="bg-white rounded-3xl p-1 shadow-sm border border-slate-50">
             <MenuButton icon="shield-lock-outline" title="Privacy & Security" color="#0D9488" />
-            <MenuButton icon="key-outline" title="Change Password" color="#0D9488" />
+            <MenuButton icon="key-outline" title="Change Password" color="#0D9488" onPress={() => router.push("/change-password")}/>
           </View>
 
           <Text className="text-slate-900 font-black text-lg mb-2 ml-1 mt-6">Preferences</Text>
