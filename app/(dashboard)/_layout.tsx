@@ -1,15 +1,41 @@
-import React from "react"
-import { Tabs } from "expo-router"
-import { MaterialCommunityIcons } from "@expo/vector-icons"
-import { Platform, View, Text } from "react-native"
+import React from "react";
+import { Tabs } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Platform, View, Text } from "react-native";
 
 const TAB_CONFIG = [
-  { name: "home", label: "Home", icon: "view-dashboard" },
-  { name: "checkin", label: "Daily Check", icon: "calendar-check" },
-  { name: "history", label: "Logs & Reports", icon: "chart-box" },
-  { name: "advice", label: "AI Advice", icon: "creation" },
-  { name: "profile", label: "User Settings", icon: "account-circle" },
-]
+  { 
+    name: "home", 
+    label: "Home", 
+    icon: "home",          
+    iconInactive: "home-outline"
+  },
+  { 
+    name: "mood", 
+    label: "Mood", 
+    icon: "emoticon-happy",
+    iconInactive: "emoticon-happy-outline"
+  },
+  { 
+    name: "work", 
+    label: "Work", 
+    icon: "briefcase",     
+    iconInactive: "briefcase-outline"
+  },
+  { 
+    name: "income", 
+    label: "Income", 
+    icon: "cash",            
+    iconInactive: "cash-multiple-outline"
+  },
+  { 
+    name: "profile", 
+    label: "Profile", 
+    icon: "account-circle",
+    iconInactive: "account-circle-outline"
+  },
+];
+
 
 const DashboardLayout = () => {
   return (
@@ -21,18 +47,18 @@ const DashboardLayout = () => {
         tabBarInactiveTintColor: "#99f6e4",
         tabBarStyle: {
           position: "absolute",
-          bottom: Platform.OS === "ios" ? 15 : 10, // Lowered for thumb reach
-          left: 10,
-          right: 10,
+          bottom: Platform.OS === "ios" ? 15 : 10,
+          left: 15,
+          right: 15,
           backgroundColor: "#0D9488",
-          borderRadius: 45,
-          height: 85,
-          paddingTop: Platform.OS === "ios" ? 25 : 35, // Balanced icon drop
+          borderRadius: 50,
+          height: 80,
+          paddingTop: Platform.OS === "ios" ? 20 : 25,
           elevation: 12,
           borderTopWidth: 0,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.2,
+          shadowOpacity: 0.25,
           shadowRadius: 10,
         },
       }}
@@ -43,51 +69,46 @@ const DashboardLayout = () => {
           name={tab.name}
           options={{
             tabBarIcon: ({ color, focused }) => (
-              <TabItem
-                icon={tab.icon as any}
-                label={tab.label}
-                color={color}
-                focused={focused}
-              />
+              <TabItem icon={tab.icon} label={tab.label} color={color} focused={focused} />
             ),
           }}
         />
       ))}
     </Tabs>
-  )
-}
+  );
+};
 
 const TabItem = ({ icon, label, color, focused }: any) => (
-  <View style={{ alignItems: "center", justifyContent: "center", width: 70 }}>
+  <View style={{ alignItems: "center", justifyContent: "center", width: 60 }}>
     <MaterialCommunityIcons
       name={focused ? icon : `${icon}-outline`}
-      size={24}
+      size={26}
       color={color}
     />
     <Text
-      numberOfLines={2}
+      numberOfLines={1}
       style={{
         color,
-        fontSize: 9,
-        fontWeight: focused ? "800" : "600",
+        fontSize: 10,
+        fontWeight: focused ? "bold" : "600",
         textAlign: "center",
         marginTop: 2,
-        lineHeight: 10,
-        width: "100%",
       }}
     >
       {label}
     </Text>
+
+    {/* Active Indicator */}
     <View
       style={{
-        height: 3,
-        width: 3,
+        height: 4,
+        width: 20,
         borderRadius: 2,
-        backgroundColor: focused ? "white" : "transparent",
-        marginTop: 2,
+        backgroundColor: focused ? "#ffffff" : "transparent",
+        marginTop: 4,
       }}
     />
   </View>
-)
+);
 
-export default DashboardLayout
+export default DashboardLayout;
