@@ -14,7 +14,7 @@ import {
 } from "react-native"
 import { useRouter } from "expo-router"
 import { useLoader } from "@/hooks/useLoader"
-import { login } from "@/services/authService"
+import { loginUser } from "@/services/authService"
 import { FontAwesome5 } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
 
@@ -53,7 +53,7 @@ const Login = () => {
     startLoading()
     try {
 
-      await login(email, password)
+      await loginUser(email, password)
       router.replace("/home")
 
     } catch (e: any) {

@@ -1,52 +1,69 @@
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth"
-import { auth, db } from "./firebase"
-import { doc, setDoc } from "firebase/firestore"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import {
+  createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  User,
+} from "firebase/auth";
+import { auth, db } from "./firebase";
+import { doc, setDoc } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const registerUser = async (fullname: string, email: string, password: string, confirmPassword: string) => {
+export type AuthError = {
+  code: string;
+  message: string;
+};
 
-    try {
-        const userCredentials = await createUserWithEmailAndPassword(auth, email, password)
-        await updateProfile(userCredentials.user, { displayName: fullname })
-        await setDoc(doc(db, "users", userCredentials.user.uid), {
-            name: fullname,
-            role: "USER",
-            email: email.toLowerCase(),
-            createAt: new Date()
-        })
-        return userCredentials.user
-    } catch (error) {
-        console.error("Error registering user:", error)
-    }
-
-}
-
-export const login = async (email: string, password: string) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password)
-    return userCredential
-  } catch (error) {
-    console.error("Error logging in:", error)
-    throw error
+export const registerUser = async (
+  fullname: string,
+  email: string,
+  password: string,
+  confirmPassword: string
+): Promise<User | AuthError> => {
+  if (password !== confirmPassword) {
+    return { code: "password_mismatch", message: "Passwords do not match." };
   }
-}
 
-
-export const logoutUser = async () => {
   try {
-    await signOut(auth)
-    await AsyncStorage.clear()
-  } catch (error) {
-    console.error("Logout failed:", error)
-  }
-}
+    const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
 
-export const isEmailRegistered = async (email: string): Promise<boolean> => {
-  try {
-    const methods = await fetchSignInMethodsForEmail(auth, email)
-    return methods.length > 0
-  } catch (error) {
-    console.error("Error checking email:", error)
-    return false
+    await updateProfile(userCredentials.user, { displayName: fullname });
+
+    await setDoc(doc(db, "users", userCredentials.user.uid), {
+      name: fullname,
+      role: "USER",
+      email: email.toLowerCase(),
+      createdAt: new Date(),
+    });
+
+    return userCredentials.user;
+  } catch (error: any) {
+    console.error("Error registering user:", error);
+    return { code: error.code || "registration_failed", message: error.message || "Failed to register user." };
   }
-}
+};
+
+export const loginUser = async (email: string, password: string): Promise<User | AuthError> => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  } catch (error: any) {
+    console.error("Error logging in:", error);
+    return { code: error.code || "login_failed", message: error.message || "Invalid email or password." };
+  }
+};
+
+export const logoutUser = async (): Promise<boolean> => {
+  try {
+    await signOut(auth);
+    await AsyncStorage.clear();
+    return true;
+  } catch (error) {
+    console.error("Logout failed:", error);
+    return false;
+  }
+};
+
+
+
