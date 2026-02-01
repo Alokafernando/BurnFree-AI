@@ -45,6 +45,20 @@ const MoodLogger = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  const userId = auth.currentUser?.uid;
+
+  const fetchHistory = async () => {
+    if (!userId) return;
+    try {
+      const q = query(collection(db, "mood_logs"), where("userId", "==", userId), orderBy("date", "desc"));
+      const snapshot = await getDocs(q);
+      setHistory(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+    } catch (e) { console.error(e); }
+  };
+
+  useEffect(() => { fetchHistory(); }, []);
+
+
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9FF]">
