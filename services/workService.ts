@@ -80,3 +80,23 @@ export const getWorkForUser = async (): Promise<Work[] | WorkError> => {
   }
 };
 
+// --- READ single work by ID ---
+export const getWorkById = async (
+  id: string
+): Promise<Work | null | WorkError> => {
+  try {
+    const docRef = doc(db, WORK_COLLECTION, id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) return null;
+
+    return { id: docSnap.id, ...(docSnap.data() as Omit<Work, "id">) };
+  } catch (error: any) {
+    console.error("Get work by ID error:", error);
+    return {
+      code: error.code || "work_fetch_failed",
+      message: error.message || "Failed to retrieve work entry.",
+    };
+  }
+};
+
