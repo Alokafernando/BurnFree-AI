@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import moment from "moment";
 import { auth, db } from "@/services/firebase";
 import {
@@ -77,10 +77,12 @@ const MoodLogger = () => {
   const handleDelete = (id: string) => {
     Alert.alert("Delete", "Remove this entry?", [
       { text: "Cancel" },
-      { text: "Delete", style: "destructive", onPress: async () => {
+      {
+        text: "Delete", style: "destructive", onPress: async () => {
           await deleteDoc(doc(db, "mood_logs", id));
           fetchHistory();
-      }},
+        }
+      },
     ]);
   };
 
@@ -89,7 +91,7 @@ const MoodLogger = () => {
       <StatusBar barStyle="dark-content" />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1">
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-          
+
           {/* --- HEADER --- */}
           <View className="px-6 pt-6 mb-6">
             <Text className="text-[#0D9488] font-bold uppercase tracking-widest text-[10px] mb-1">SOUL TRACKER</Text>
@@ -101,8 +103,8 @@ const MoodLogger = () => {
             <Text className="text-slate-900 font-bold mb-3 text-base">Mood</Text>
             <View className="flex-row justify-between mb-8">
               {moodOptions.map((item) => (
-                <TouchableOpacity 
-                  key={item.val} 
+                <TouchableOpacity
+                  key={item.val}
                   onPress={() => setMood(item.val)}
                   className={`items-center p-3 rounded-2xl w-[18%] ${mood === item.val ? "bg-[#0D9488]" : "bg-slate-50"}`}
                 >
@@ -115,8 +117,8 @@ const MoodLogger = () => {
             <Text className="text-slate-900 font-bold mb-3 text-base">Stress</Text>
             <View className="flex-row justify-between mb-8">
               {stressOptions.map((item) => (
-                <TouchableOpacity 
-                  key={item.val} 
+                <TouchableOpacity
+                  key={item.val}
                   onPress={() => setStress(item.val)}
                   className={`items-center p-3 rounded-2xl w-[23%] ${stress === item.val ? "bg-[#0D9488]" : "bg-slate-50"}`}
                 >
@@ -129,8 +131,8 @@ const MoodLogger = () => {
             <Text className="text-slate-900 font-bold mb-3">Sleep: <Text className="text-[#0D9488]">{sleep} hours</Text></Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
               {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
-                <TouchableOpacity 
-                  key={num} 
+                <TouchableOpacity
+                  key={num}
                   onPress={() => setSleep(num)}
                   className={`w-12 h-12 rounded-full items-center justify-center mr-2 border-2 ${sleep === num ? "bg-[#0D9488] border-[#0D9488]" : "bg-white border-slate-100"}`}
                 >
@@ -139,17 +141,17 @@ const MoodLogger = () => {
               ))}
             </ScrollView>
 
-            <TextInput 
-              value={notes} 
-              onChangeText={setNotes} 
-              placeholder="What's on your mind?..." 
-              multiline 
-              className="bg-slate-50 rounded-3xl p-5 h-28 mb-6 text-slate-800 border border-slate-100" 
+            <TextInput
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="What's on your mind?..."
+              multiline
+              className="bg-slate-50 rounded-3xl p-5 h-28 mb-6 text-slate-800 border border-slate-100"
               textAlignVertical="top"
             />
 
-            <TouchableOpacity 
-              onPress={handleSave} 
+            <TouchableOpacity
+              onPress={handleSave}
               disabled={loading}
               className="bg-[#0D9488] py-5 rounded-[25px] flex-row justify-center items-center"
             >
@@ -165,7 +167,7 @@ const MoodLogger = () => {
           {/* --- HISTORY SECTION --- */}
           <View className="px-6 mt-10">
             <Text className="text-2xl font-black text-slate-900 mb-6">Your Journey</Text>
-            
+
             {history.map((item) => {
               const moodIcon = moodOptions.find(m => m.val === item.mood) || moodOptions[2];
               return (
@@ -188,8 +190,11 @@ const MoodLogger = () => {
                       }} className="p-2 bg-slate-50 rounded-full mr-2">
                         <Feather name="edit-3" size={16} color="#0D9488" />
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => handleDelete(item.id)} className="p-2 bg-rose-50 rounded-full">
-                        <Feather name="trash-2" size={16} color="#f43f5e" />
+                      <TouchableOpacity
+                        onPress={() => handleDelete(item.id)}
+                        className="p-3 bg-rose-50 rounded-full"
+                      >
+                        <FontAwesome5 name="trash" size={16} color="#E11D48" />
                       </TouchableOpacity>
                     </View>
                   </View>
