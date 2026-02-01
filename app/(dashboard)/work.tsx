@@ -12,7 +12,7 @@ import {
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "@/services/firebase";
-import { addWork, deleteWork, getWorkForUser } from "@/services/workService";
+import { addWork, deleteWork, getWorkForUser, updateWork } from "@/services/workService";
 
 interface WorkEntry {
   id: string;
@@ -29,6 +29,7 @@ const WorkTracker = () => {
   const [hours, setHours] = useState("");
   const [loading, setLoading] = useState(false);
   const [workLogs, setWorkLogs] = useState<WorkEntry[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const fetchWorkLogs = async () => {
     const result = await getWorkForUser();
@@ -49,12 +50,17 @@ const WorkTracker = () => {
     }
 
     setLoading(true);
-    const result = await addWork(
+
+    const payload = {
       client,
       project,
-      Number(hours),
-      new Date().toISOString().split("T")[0]
-    );
+      hours: Number(hours),
+      date: new Date().toISOString().split("T")[0],
+    };
+
+    const result = editingId
+      ? await updateWork(editingId, payload)
+      : await addWork(client, project, Number(hours), payload.date);
 
     if ("code" in result) {
       Alert.alert("Error", result.message);
@@ -62,8 +68,10 @@ const WorkTracker = () => {
       setClient("");
       setProject("");
       setHours("");
+      setEditingId(null);
       fetchWorkLogs();
     }
+
     setLoading(false);
   };
 
@@ -137,7 +145,7 @@ const WorkTracker = () => {
               <ActivityIndicator color="white" />
             ) : (
               <Text className="text-white font-black text-lg uppercase">
-                Save Work
+                {editingId ? "Update Work" : "Save Work"}
               </Text>
             )}
           </TouchableOpacity>
@@ -165,20 +173,24 @@ const WorkTracker = () => {
             </Text>
           ) : (
             workLogs.map(entry => (
-              <View
+              <TouchableOpacity
                 key={entry.id}
+                onPress={() => {
+                  // Load this entry into the input fields for editing
+                  setEditingId(entry.id);
+                  setClient(entry.client);
+                  setProject(entry.project);
+                  setHours(String(entry.hours));
+                }}
+                activeOpacity={0.8} // slight transparency when tapping
                 className="bg-white rounded-2xl p-4 mb-3 shadow-sm flex-row justify-between items-center"
               >
                 <View>
-                  <Text className="font-bold text-slate-800">
-                    {entry.client}
-                  </Text>
+                  <Text className="font-bold text-slate-800">{entry.client}</Text>
                   <Text className="text-slate-500 text-sm">
                     {entry.project} • {entry.hours}h
                   </Text>
-                  <Text className="text-slate-400 text-xs">
-                    {entry.date}
-                  </Text>
+                  <Text className="text-slate-400 text-xs">{entry.date}</Text>
                 </View>
 
                 <TouchableOpacity
@@ -187,7 +199,7 @@ const WorkTracker = () => {
                 >
                   <FontAwesome5 name="trash" size={16} color="#E11D48" />
                 </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             ))
           )}
         </View>
