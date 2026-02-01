@@ -121,3 +121,17 @@ export const updateMood = async (
   }
 };
 
+// --- DELETE ---
+export const deleteMood = async (id: string): Promise<true | MoodError> => {
+  try {
+    const docRef = doc(db, MOODS_COLLECTION, id);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error: any) {
+    console.error("Delete mood error:", error);
+    return {
+      code: error.code || "mood_delete_failed",
+      message: error.message || "Failed to delete mood.",
+    };
+  }
+};
