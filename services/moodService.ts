@@ -99,3 +99,25 @@ export const getMoodById = async (
   }
 };
 
+// --- UPDATE ---
+export const updateMood = async (
+  id: string,
+  updates: Partial<Omit<Mood, "id" | "userId" | "createdAt">>
+): Promise<Mood | MoodError> => {
+  try {
+    const docRef = doc(db, MOODS_COLLECTION, id);
+
+    await updateDoc(docRef, updates);
+
+    // Return updated document
+    const updatedSnap = await getDoc(docRef);
+    return { id: updatedSnap.id, ...(updatedSnap.data() as Omit<Mood, "id">) };
+  } catch (error: any) {
+    console.error("Update mood error:", error);
+    return {
+      code: error.code || "mood_update_failed",
+      message: error.message || "Failed to update mood.",
+    };
+  }
+};
+
