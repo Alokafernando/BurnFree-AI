@@ -38,6 +38,22 @@ const WorkTracker = () => {
   const [loading, setLoading] = useState(false);
   const [workLogs, setWorkLogs] = useState<WorkEntry[]>([]);
 
+  const fetchWorkLogs = async () => {
+    if (!userId) return;
+    const q = query(
+      collection(db, "work_logs"),
+      where("userId", "==", userId),
+      orderBy("date", "desc")
+    );
+    const snapshot = await getDocs(q);
+    setWorkLogs(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as WorkEntry)));
+  };
+
+  useEffect(() => {
+    fetchWorkLogs();
+  }, []);
+
+  
 
   const totalHours = workLogs.reduce((sum, e) => sum + e.hours, 0);
 
