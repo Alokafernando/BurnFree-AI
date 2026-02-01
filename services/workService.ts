@@ -51,3 +51,32 @@ export const addWork = async (
   }
 };
 
+// --- READ ALL (user’s work logs) ---
+export const getWorkForUser = async (): Promise<Work[] | WorkError> => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      return { code: "unauthorized", message: "User not logged in." };
+    }
+
+    const q = query(
+      collection(db, WORK_COLLECTION),
+      where("userId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...(docSnap.data() as Omit<Work, "id">),
+    }));
+  } catch (error: any) {
+    console.error("Get work error:", error);
+    return {
+      code: error.code || "work_fetch_failed",
+      message: error.message || "Failed to retrieve work logs.",
+    };
+  }
+};
+
