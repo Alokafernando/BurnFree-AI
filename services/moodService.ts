@@ -47,3 +47,33 @@ export const addMood = async (
   }
 };
 
+// --- READ ALL (user’s moods) ---
+export const getMoodsForUser = async (): Promise<Mood[] | MoodError> => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      return { code: "unauthorized", message: "User not logged in." };
+    }
+
+    const q = query(
+      collection(db, MOODS_COLLECTION),
+      where("userId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+    const entries = snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...(docSnap.data() as Omit<Mood, "id">),
+    }));
+
+    return entries;
+  } catch (error: any) {
+    console.error("Get moods error:", error);
+    return {
+      code: error.code || "mood_fetch_failed",
+      message: error.message || "Failed to retrieve moods.",
+    };
+  }
+};
+
