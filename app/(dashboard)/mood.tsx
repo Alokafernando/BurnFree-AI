@@ -63,16 +63,27 @@ const MoodLogger = () => {
     setLoading(true);
     try {
       const payload = { userId, mood, stress, sleep, notes, date: moment().format("YYYY-MM-DD") };
+
       if (editingId) {
         await updateDoc(doc(db, "mood_logs", editingId), payload);
       } else {
         await addDoc(collection(db, "mood_logs"), payload);
       }
-      setMood(null); setStress(null); setSleep(8); setNotes(""); setEditingId(null);
+
+      setMood(null);
+      setStress(null);
+      setSleep(8);
+      setNotes("");
+      setEditingId(null);
+
       fetchHistory();
-    } catch (e) { Alert.alert("Error", "Save failed."); }
-    finally { setLoading(false); }
+    } catch (e) {
+      Alert.alert("Error", "Save failed.");
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const handleDelete = (id: string) => {
     Alert.alert("Delete", "Remove this entry?", [
@@ -157,7 +168,9 @@ const MoodLogger = () => {
             >
               {loading ? <ActivityIndicator color="white" /> : (
                 <>
-                  <Text className="text-white font-black text-lg uppercase tracking-tighter mr-2">SAVE LOG</Text>
+                  <Text className="text-white font-black text-lg uppercase tracking-tighter mr-2">
+                    {editingId ? "Update Log" : "Save Log"}
+                  </Text>
                   <Feather name="arrow-right" size={20} color="white" />
                 </>
               )}
@@ -171,7 +184,18 @@ const MoodLogger = () => {
             {history.map((item) => {
               const moodIcon = moodOptions.find(m => m.val === item.mood) || moodOptions[2];
               return (
-                <View key={item.id} className="bg-white rounded-[30px] p-5 mb-4 shadow-sm border border-slate-100">
+                <TouchableOpacity
+                  key={item.id}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    setEditingId(item.id);
+                    setMood(item.mood);
+                    setStress(item.stress);
+                    setSleep(item.sleep);
+                    setNotes(item.notes);
+                  }}
+                  className="bg-white rounded-[30px] p-5 mb-4 shadow-sm border border-slate-100"
+                >
                   <View className="flex-row items-center">
                     <View className="bg-purple-50 w-14 h-14 rounded-2xl items-center justify-center mr-4">
                       <Text className="text-3xl">{moodIcon.emoji}</Text>
@@ -180,30 +204,28 @@ const MoodLogger = () => {
                       <Text className="text-slate-400 text-[10px] font-bold uppercase">{moment(item.date).format("MMM DD, YYYY")}</Text>
                       <Text className="text-slate-900 font-black text-lg">{moodIcon.label}</Text>
                       <View className="flex-row mt-1">
-                        <View className="bg-emerald-50 px-2 py-0.5 rounded mr-2"><Text className="text-[#0D9488] text-[9px] font-bold">STRESS {item.stress}</Text></View>
-                        <View className="bg-emerald-50 px-2 py-0.5 rounded"><Text className="text-[#0D9488] text-[9px] font-bold">🌙 {item.sleep}H SLEEP</Text></View>
+                        <View className="bg-emerald-50 px-2 py-0.5 rounded mr-2">
+                          <Text className="text-[#0D9488] text-[9px] font-bold">STRESS {item.stress}</Text>
+                        </View>
+                        <View className="bg-emerald-50 px-2 py-0.5 rounded">
+                          <Text className="text-[#0D9488] text-[9px] font-bold">🌙 {item.sleep}H SLEEP</Text>
+                        </View>
                       </View>
                     </View>
-                    <View className="flex-row">
-                      <TouchableOpacity onPress={() => {
-                        setEditingId(item.id); setMood(item.mood); setStress(item.stress); setSleep(item.sleep); setNotes(item.notes);
-                      }} className="p-2 bg-slate-50 rounded-full mr-2">
-                        <Feather name="edit-3" size={16} color="#0D9488" />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => handleDelete(item.id)}
-                        className="p-3 bg-rose-50 rounded-full"
-                      >
-                        <FontAwesome5 name="trash" size={16} color="#E11D48" />
-                      </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity
+                      onPress={() => handleDelete(item.id)}
+                      className="p-3 bg-rose-50 rounded-full"
+                    >
+                      <FontAwesome5 name="trash" size={16} color="#E11D48" />
+                    </TouchableOpacity>
                   </View>
+
                   {item.notes ? (
                     <View className="mt-3 pt-3 border-t border-slate-50">
                       <Text className="text-slate-500 italic text-sm">"{item.notes}"</Text>
                     </View>
                   ) : null}
-                </View>
+                </TouchableOpacity>
               );
             })}
           </View>
