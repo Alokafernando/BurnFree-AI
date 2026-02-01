@@ -58,6 +58,22 @@ const MoodLogger = () => {
 
   useEffect(() => { fetchHistory(); }, []);
 
+  const handleSave = async () => {
+    if (!userId || !mood || !stress) return Alert.alert("Wait!", "Please select Mood and Stress.");
+    setLoading(true);
+    try {
+      const payload = { userId, mood, stress, sleep, notes, date: moment().format("YYYY-MM-DD") };
+      if (editingId) {
+        await updateDoc(doc(db, "mood_logs", editingId), payload);
+      } else {
+        await addDoc(collection(db, "mood_logs"), payload);
+      }
+      setMood(null); setStress(null); setSleep(8); setNotes(""); setEditingId(null);
+      fetchHistory();
+    } catch (e) { Alert.alert("Error", "Save failed."); }
+    finally { setLoading(false); }
+  };
+
 
 
   return (
