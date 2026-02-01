@@ -120,4 +120,17 @@ export const updateWork = async (
   }
 };
 
-
+// --- DELETE ---
+export const deleteWork = async (id: string): Promise<true | WorkError> => {
+  try {
+    const docRef = doc(db, WORK_COLLECTION, id);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error: any) {
+    console.error("Delete work error:", error);
+    return {
+      code: error.code || "work_delete_failed",
+      message: error.message || "Failed to delete work entry.",
+    };
+  }
+};
