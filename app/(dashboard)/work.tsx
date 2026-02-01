@@ -76,6 +76,19 @@ const WorkTracker = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    Alert.alert("Delete Entry", "Are you sure?", [
+      { text: "Cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          await deleteDoc(doc(db, "work_logs", id));
+          fetchWorkLogs();
+        },
+      },
+    ]);
+  };
 
   const totalHours = workLogs.reduce((sum, e) => sum + e.hours, 0);
 
