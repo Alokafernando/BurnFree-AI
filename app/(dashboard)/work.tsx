@@ -9,18 +9,10 @@ import {
   Alert,
   SafeAreaView,
 } from "react-native";
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  orderBy,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+
 import { FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "@/services/firebase";
+import { addWork, deleteWork, getWorkForUser } from "@/services/workService";
 
 interface WorkEntry {
   id: string;
@@ -39,14 +31,12 @@ const WorkTracker = () => {
   const [workLogs, setWorkLogs] = useState<WorkEntry[]>([]);
 
   const fetchWorkLogs = async () => {
-    if (!userId) return;
-    const q = query(
-      collection(db, "work_logs"),
-      where("userId", "==", userId),
-      orderBy("date", "desc")
-    );
-    const snapshot = await getDocs(q);
-    setWorkLogs(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as WorkEntry)));
+    const result = await getWorkForUser();
+    if ("code" in result) {
+      Alert.alert("Error", result.message);
+    } else {
+      setWorkLogs(result);
+    }
   };
 
   useEffect(() => {
@@ -54,26 +44,27 @@ const WorkTracker = () => {
   }, []);
 
   const handleSave = async () => {
-    if (!client || !project || !hours)
+    if (!client || !project || !hours) {
       return Alert.alert("Missing info", "Please fill all fields");
+    }
+
     setLoading(true);
-    try {
-      await addDoc(collection(db, "work_logs"), {
-        userId,
-        client,
-        project,
-        hours: Number(hours),
-        date: new Date().toISOString().split("T")[0],
-      });
+    const result = await addWork(
+      client,
+      project,
+      Number(hours),
+      new Date().toISOString().split("T")[0]
+    );
+
+    if ("code" in result) {
+      Alert.alert("Error", result.message);
+    } else {
       setClient("");
       setProject("");
       setHours("");
       fetchWorkLogs();
-    } catch {
-      Alert.alert("Error", "Could not save work");
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -83,7 +74,10 @@ const WorkTracker = () => {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          await deleteDoc(doc(db, "work_logs", id));
+          const result = await deleteWork(id);
+          if (result !== true) {
+            Alert.alert("Error", result.message);
+          }
           fetchWorkLogs();
         },
       },
@@ -135,7 +129,7 @@ const WorkTracker = () => {
           />
 
           <TouchableOpacity
-            // onPress={handleSave}
+            onPress={handleSave}
             disabled={loading}
             className="bg-[#0D9488] py-4 rounded-2xl items-center shadow-lg"
           >
@@ -188,7 +182,7 @@ const WorkTracker = () => {
                 </View>
 
                 <TouchableOpacity
-                  // onPress={() => handleDelete(entry.id)}
+                  onPress={() => handleDelete(entry.id)}
                   className="p-3 bg-rose-50 rounded-full"
                 >
                   <FontAwesome5 name="trash" size={16} color="#E11D48" />
