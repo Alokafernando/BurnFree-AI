@@ -53,7 +53,29 @@ const WorkTracker = () => {
     fetchWorkLogs();
   }, []);
 
-  
+  const handleSave = async () => {
+    if (!client || !project || !hours)
+      return Alert.alert("Missing info", "Please fill all fields");
+    setLoading(true);
+    try {
+      await addDoc(collection(db, "work_logs"), {
+        userId,
+        client,
+        project,
+        hours: Number(hours),
+        date: new Date().toISOString().split("T")[0],
+      });
+      setClient("");
+      setProject("");
+      setHours("");
+      fetchWorkLogs();
+    } catch {
+      Alert.alert("Error", "Could not save work");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const totalHours = workLogs.reduce((sum, e) => sum + e.hours, 0);
 
