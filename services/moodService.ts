@@ -77,3 +77,25 @@ export const getMoodsForUser = async (): Promise<Mood[] | MoodError> => {
   }
 };
 
+// --- READ single mood by ID ---
+export const getMoodById = async (
+  id: string
+): Promise<Mood | null | MoodError> => {
+  try {
+    const docRef = doc(db, MOODS_COLLECTION, id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return null;
+    }
+
+    return { id: docSnap.id, ...(docSnap.data() as Omit<Mood, "id">) };
+  } catch (error: any) {
+    console.error("Get mood by ID error:", error);
+    return {
+      code: error.code || "mood_fetch_failed",
+      message: error.message || "Failed to retrieve mood by ID.",
+    };
+  }
+};
+
