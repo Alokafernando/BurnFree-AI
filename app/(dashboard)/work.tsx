@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import {
   collection,
@@ -18,7 +19,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "@/services/firebase";
 
 interface WorkEntry {
@@ -37,149 +38,117 @@ const WorkTracker = () => {
   const [loading, setLoading] = useState(false);
   const [workLogs, setWorkLogs] = useState<WorkEntry[]>([]);
 
-  // Fetch work logs
-  const fetchWorkLogs = async () => {
-    if (!userId) return;
-    const q = query(
-      collection(db, "work_logs"),
-      where("userId", "==", userId),
-      orderBy("date", "desc")
-    );
-    const snapshot = await getDocs(q);
-    const entries: WorkEntry[] = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Omit<WorkEntry, "id">),
-    }));
-    setWorkLogs(entries);
-  };
 
-  useEffect(() => {
-    fetchWorkLogs();
-  }, []);
-
-  // Save work entry
-  const handleSave = async () => {
-    if (!client || !project || !hours)
-      return Alert.alert("Please fill all fields!");
-    setLoading(true);
-    try {
-      await addDoc(collection(db, "work_logs"), {
-        userId,
-        client,
-        project,
-        hours: Number(hours),
-        date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-      });
-      setClient("");
-      setProject("");
-      setHours("");
-      fetchWorkLogs();
-      Alert.alert("Work entry saved!");
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Failed to save work entry.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Delete entry
-  const handleDelete = async (id: string) => {
-    Alert.alert("Delete Entry", "Are you sure?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          await deleteDoc(doc(db, "work_logs", id));
-          fetchWorkLogs();
-        },
-      },
-    ]);
-  };
-
-  // Calculate total hours
-  const totalHours = workLogs.reduce((sum, entry) => sum + entry.hours, 0);
+  const totalHours = workLogs.reduce((sum, e) => sum + e.hours, 0);
 
   return (
-    <ScrollView className="flex-1 bg-white p-4">
-      <Text className="text-2xl font-bold text-gray-800 mb-4">Work Tracker</Text>
+    <SafeAreaView className="flex-1 bg-[#F9FAFB]">
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
-      {/* Input Fields */}
-      <View className="mb-4">
-        <Text className="text-gray-700 mb-1">Client</Text>
-        <TextInput
-          value={client}
-          onChangeText={setClient}
-          placeholder="Enter client name"
-          className="border border-gray-300 rounded-xl px-4 py-3"
-        />
-      </View>
+        {/* HEADER */}
+        <View className="px-6 pt-6 mb-6">
+          <Text className="text-[#0D9488] text-xs font-bold tracking-widest mb-1">
+            WORK & PRODUCTIVITY
+          </Text>
+          <Text className="text-3xl font-black text-slate-900">
+            Track Your Work
+          </Text>
+        </View>
 
-      <View className="mb-4">
-        <Text className="text-gray-700 mb-1">Project</Text>
-        <TextInput
-          value={project}
-          onChangeText={setProject}
-          placeholder="Enter project name"
-          className="border border-gray-300 rounded-xl px-4 py-3"
-        />
-      </View>
+        {/* INPUT CARD */}
+        <View className="mx-6 bg-white rounded-3xl p-6 shadow-md mb-6">
 
-      <View className="mb-4">
-        <Text className="text-gray-700 mb-1">Hours Worked</Text>
-        <TextInput
-          value={hours}
-          onChangeText={setHours}
-          placeholder="Enter hours worked"
-          keyboardType="numeric"
-          className="border border-gray-300 rounded-xl px-4 py-3"
-        />
-      </View>
+          <Text className="font-semibold text-slate-700 mb-1">Client</Text>
+          <TextInput
+            value={client}
+            onChangeText={setClient}
+            placeholder="Client name"
+            className="bg-slate-50 rounded-xl px-4 py-3 mb-4 border border-slate-100"
+          />
 
-      {/* Save Button */}
-      <TouchableOpacity
-        onPress={handleSave}
-        disabled={loading}
-        className="bg-teal-700 py-4 rounded-2xl items-center shadow-md mb-6"
-      >
-        {loading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="text-white font-bold text-lg">Save Work</Text>
-        )}
-      </TouchableOpacity>
+          <Text className="font-semibold text-slate-700 mb-1">Project</Text>
+          <TextInput
+            value={project}
+            onChangeText={setProject}
+            placeholder="Project name"
+            className="bg-slate-50 rounded-xl px-4 py-3 mb-4 border border-slate-100"
+          />
 
-      {/* Summary */}
-      <View className="bg-blue-100 rounded-xl p-4 mb-4 shadow-md">
-        <Text className="text-gray-700 font-semibold">Total Hours: {totalHours}</Text>
-      </View>
+          <Text className="font-semibold text-slate-700 mb-1">Hours Worked</Text>
+          <TextInput
+            value={hours}
+            onChangeText={setHours}
+            placeholder="e.g. 5"
+            keyboardType="numeric"
+            className="bg-slate-50 rounded-xl px-4 py-3 mb-6 border border-slate-100"
+          />
 
-      {/* Work History */}
-      <Text className="text-xl font-bold text-gray-800 mb-2">Work History</Text>
-      {workLogs.length === 0 ? (
-        <Text className="text-gray-500">No work entries yet.</Text>
-      ) : (
-        workLogs.map((entry) => (
-          <View
-            key={entry.id}
-            className="border border-gray-200 rounded-xl p-4 mb-3 flex-row justify-between items-center"
+          <TouchableOpacity
+            // onPress={handleSave}
+            disabled={loading}
+            className="bg-[#0D9488] py-4 rounded-2xl items-center shadow-lg"
           >
-            <View>
-              <Text className="text-gray-800 font-semibold">
-                {entry.client} - {entry.project}
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-white font-black text-lg uppercase">
+                Save Work
               </Text>
-              <Text className="text-gray-600">
-                Hours: {entry.hours} | Date: {entry.date}
-              </Text>
-            </View>
-            <TouchableOpacity onPress={() => handleDelete(entry.id)}>
-              <FontAwesome5 name="trash" size={20} color="red" />
-            </TouchableOpacity>
-          </View>
-        ))
-      )}
-    </ScrollView>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* TOTAL HOURS */}
+        <View className="mx-6 bg-emerald-50 rounded-2xl p-5 mb-6 flex-row justify-between items-center">
+          <Text className="text-emerald-900 font-bold text-lg">
+            Total Hours
+          </Text>
+          <Text className="text-emerald-900 font-black text-2xl">
+            {totalHours}h
+          </Text>
+        </View>
+
+        {/* HISTORY */}
+        <View className="px-6">
+          <Text className="text-xl font-black text-slate-900 mb-4">
+            Work History
+          </Text>
+
+          {workLogs.length === 0 ? (
+            <Text className="text-slate-400 text-center">
+              No work logged yet
+            </Text>
+          ) : (
+            workLogs.map(entry => (
+              <View
+                key={entry.id}
+                className="bg-white rounded-2xl p-4 mb-3 shadow-sm flex-row justify-between items-center"
+              >
+                <View>
+                  <Text className="font-bold text-slate-800">
+                    {entry.client}
+                  </Text>
+                  <Text className="text-slate-500 text-sm">
+                    {entry.project} • {entry.hours}h
+                  </Text>
+                  <Text className="text-slate-400 text-xs">
+                    {entry.date}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  // onPress={() => handleDelete(entry.id)}
+                  className="p-3 bg-rose-50 rounded-full"
+                >
+                  <FontAwesome5 name="trash" size={16} color="#E11D48" />
+                </TouchableOpacity>
+              </View>
+            ))
+          )}
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
