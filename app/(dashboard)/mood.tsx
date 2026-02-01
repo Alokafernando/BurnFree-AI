@@ -74,7 +74,15 @@ const MoodLogger = () => {
     finally { setLoading(false); }
   };
 
-
+  const handleDelete = (id: string) => {
+    Alert.alert("Delete", "Remove this entry?", [
+      { text: "Cancel" },
+      { text: "Delete", style: "destructive", onPress: async () => {
+          await deleteDoc(doc(db, "mood_logs", id));
+          fetchHistory();
+      }},
+    ]);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9FF]">
