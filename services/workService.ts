@@ -100,3 +100,24 @@ export const getWorkById = async (
   }
 };
 
+// --- UPDATE ---
+export const updateWork = async (
+  id: string,
+  updates: Partial<Omit<Work, "id" | "userId" | "createdAt">>
+): Promise<Work | WorkError> => {
+  try {
+    const docRef = doc(db, WORK_COLLECTION, id);
+    await updateDoc(docRef, updates);
+
+    const updatedSnap = await getDoc(docRef);
+    return { id: updatedSnap.id, ...(updatedSnap.data() as Omit<Work, "id">) };
+  } catch (error: any) {
+    console.error("Update work error:", error);
+    return {
+      code: error.code || "work_update_failed",
+      message: error.message || "Failed to update work entry.",
+    };
+  }
+};
+
+
