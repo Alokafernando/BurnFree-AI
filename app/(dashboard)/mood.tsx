@@ -1,216 +1,172 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, SafeAreaView, StatusBar } from "react-native";
-import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import moment from "moment";
 import { auth, db } from "@/services/firebase";
+import {
+  collection, addDoc, getDocs, query, where,
+  orderBy, deleteDoc, updateDoc, doc,
+} from "firebase/firestore";
 
-// Emojis for mood and stress
-const moodEmojis = ["😡", "😟", "😐", "🙂", "😊", "😁", "😃", "😍"];
-const stressEmojis = ["😌", "😐", "😣", "😫", "😖", "😡"];
-const sleepHours = Array.from({ length: 24 }, (_, i) => i + 1);
+// --- Constants ---
+const moodOptions = [
+  { val: 2, emoji: "😫", label: "Awful" },
+  { val: 4, emoji: "😟", label: "Low" },
+  { val: 6, emoji: "😐", label: "Okay" },
+  { val: 8, emoji: "🙂", label: "Good" },
+  { val: 10, emoji: "🤩", label: "Great" },
+];
 
-interface MoodEntry {
-  id: string;
-  mood: number;
-  stress: number;
-  sleep: number;
-  notes: string;
-  date: string;
-}
+const stressOptions = [
+  { val: 2, emoji: "🧘", label: "Zen" },
+  { val: 5, emoji: "⚖️", label: "Mild" },
+  { val: 8, emoji: "😰", label: "High" },
+  { val: 10, emoji: "🔥", label: "Extreme" },
+];
 
 const MoodLogger = () => {
   const [mood, setMood] = useState<number | null>(null);
   const [stress, setStress] = useState<number | null>(null);
-  const [sleep, setSleep] = useState<number | null>(null);
+  const [sleep, setSleep] = useState<number>(8);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
-  const [history, setHistory] = useState<MoodEntry[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const userId = auth.currentUser?.uid;
-
-  // Fetch history
-  const fetchHistory = async () => {
-    if (!userId) return;
-    const q = query(
-      collection(db, "mood_logs"),
-      where("userId", "==", userId),
-      orderBy("date", "desc")
-    );
-    const snapshot = await getDocs(q);
-    const entries: MoodEntry[] = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...(doc.data() as Omit<MoodEntry, "id">),
-    }));
-    setHistory(entries);
-  };
-
-  useEffect(() => { fetchHistory(); }, []);
-
-  // Save entry
-  const handleSave = async () => {
-    if (!userId) return;
-    if (mood === null || stress === null || sleep === null) {
-      return alert("Please select mood, stress, and sleep hours!");
-    }
-    setLoading(true);
-    try {
-      await addDoc(collection(db, "mood_logs"), {
-        userId,
-        mood,
-        stress,
-        sleep,
-        notes,
-        date: moment().format("YYYY-MM-DD"),
-      });
-      setMood(null); setStress(null); setSleep(null); setNotes("");
-      await fetchHistory();
-      alert("Mood entry saved!");
-    } catch (err) {
-      console.log(err);
-      alert("Failed to save mood entry.");
-    } finally { setLoading(false); }
-  };
-
-  const handleDelete = async (id: string) => {
-    alert("Delete Entry?");
-    await deleteDoc(doc(db, "mood_logs", id));
-    fetchHistory();
-  };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-[#F9F9FF]">
       <StatusBar barStyle="dark-content" />
-      <ScrollView className="px-5 py-6" showsVerticalScrollIndicator={false}>
-
-        {/* Header */}
-        <View className="flex-row justify-between items-center mb-6">
-          <View>
-            <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest">Hello</Text>
-            <Text className="text-3xl font-extrabold text-gray-900">Track Your Mood</Text>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1">
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+          
+          {/* --- HEADER --- */}
+          <View className="px-6 pt-6 mb-6">
+            <Text className="text-[#0D9488] font-bold uppercase tracking-widest text-[10px] mb-1">SOUL TRACKER</Text>
+            <Text className="text-4xl font-black text-[#1A1A1A]">{editingId ? "Edit Log" : "How are you?"}</Text>
           </View>
-          <View className="bg-white p-3 rounded-full shadow-sm border border-gray-100">
-            <Feather name="calendar" size={24} color="#64748b" />
-          </View>
-        </View>
 
-        {/* Mood Card */}
-        <View className="bg-white rounded-3xl p-6 shadow-md mb-6">
-          <Text className="text-gray-700 font-semibold mb-2">Mood</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 20 }}
-          >
-            {moodEmojis.map((emoji, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => setMood(index + 1)}
-                className={`px-4 py-3 m-1 rounded-2xl ${mood === index + 1 ? 'bg-indigo-300 shadow-lg' : 'bg-gray-100'}`}
-              >
-                <Text className="text-3xl">{emoji}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          {/* Right gradient hint */}
-          <View className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none" />
-        </View>
-
-        {/* Stress Card */}
-        <View className="bg-white rounded-3xl p-6 shadow-md mb-6">
-          <Text className="text-gray-700 font-semibold mb-2">Stress</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 20 }}
-          >
-            {stressEmojis.map((emoji, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => setStress(index + 1)}
-                className={`px-4 py-3 m-1 rounded-2xl ${stress === index + 1 ? 'bg-rose-300 shadow-lg' : 'bg-gray-100'}`}
-              >
-                <Text className="text-3xl">{emoji}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          {/* Right gradient hint */}
-          <View className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none" />
-        </View>
-
-        {/* Sleep Card */}
-        <View className="bg-white rounded-3xl p-6 shadow-md mb-6">
-          <Text className="text-gray-700 font-semibold mb-2">Sleep Hours</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
-            {sleepHours.map((h) => (
-              <TouchableOpacity
-                key={h}
-                onPress={() => setSleep(h)}
-                className={`px-4 py-3 rounded-2xl m-1 ${sleep === h ? 'bg-amber-300 shadow-lg' : 'bg-gray-100'}`}
-              >
-                <Text className="font-bold text-gray-700">{h}h</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Notes Card */}
-        <View className="bg-white rounded-3xl p-6 shadow-md mb-6">
-          <Text className="text-gray-700 font-semibold mb-2">Notes (Optional)</Text>
-          <TextInput
-            value={notes}
-            onChangeText={setNotes}
-            multiline
-            placeholder="Any thoughts for today?"
-            className="border border-gray-300 rounded-xl px-4 py-3 h-20 text-gray-700"
-          />
-        </View>
-
-        {/* Save Button */}
-        <TouchableOpacity
-          onPress={handleSave}
-          disabled={loading}
-          className={`py-4 rounded-3xl items-center mb-6 ${loading ? 'bg-gray-300' : 'bg-gradient-to-r from-teal-500 to-teal-700 shadow-lg'}`}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <View className="flex-row items-center">
-              <Text className="text-white font-bold text-lg mr-2">Save Mood</Text>
-              <Feather name="check-circle" size={20} color="white" />
+          {/* --- INPUT CARD --- */}
+          <View className="mx-6 bg-white rounded-[40px] p-6 shadow-xl shadow-emerald-100 border border-emerald-50">
+            <Text className="text-slate-900 font-bold mb-3 text-base">Mood</Text>
+            <View className="flex-row justify-between mb-8">
+              {moodOptions.map((item) => (
+                <TouchableOpacity 
+                  key={item.val} 
+                  onPress={() => setMood(item.val)}
+                  className={`items-center p-3 rounded-2xl w-[18%] ${mood === item.val ? "bg-[#0D9488]" : "bg-slate-50"}`}
+                >
+                  <Text className="text-2xl">{item.emoji}</Text>
+                  <Text className={`text-[9px] font-bold mt-1 ${mood === item.val ? "text-white" : "text-slate-400"}`}>{item.label}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          )}
-        </TouchableOpacity>
 
-        {/* History */}
-        <Text className="text-2xl font-bold text-gray-900 mb-4">History</Text>
-        {history.length === 0 ? (
-          <View className="items-center py-12 bg-gray-100/50 rounded-2xl border border-dashed border-gray-300">
-            <Feather name="file-text" size={48} color="#94a3b8" />
-            <Text className="text-gray-400 mt-3 font-medium">No entries yet.</Text>
-          </View>
-        ) : (
-          history.map(entry => (
-            <View
-              key={entry.id}
-              className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-100 flex-row justify-between items-center"
+            <Text className="text-slate-900 font-bold mb-3 text-base">Stress</Text>
+            <View className="flex-row justify-between mb-8">
+              {stressOptions.map((item) => (
+                <TouchableOpacity 
+                  key={item.val} 
+                  onPress={() => setStress(item.val)}
+                  className={`items-center p-3 rounded-2xl w-[23%] ${stress === item.val ? "bg-[#0D9488]" : "bg-slate-50"}`}
+                >
+                  <Text className="text-xl mb-1">{item.emoji}</Text>
+                  <Text className={`text-[10px] font-black ${stress === item.val ? "text-white" : "text-slate-500"}`}>{item.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text className="text-slate-900 font-bold mb-3">Sleep: <Text className="text-[#0D9488]">{sleep} hours</Text></Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
+                <TouchableOpacity 
+                  key={num} 
+                  onPress={() => setSleep(num)}
+                  className={`w-12 h-12 rounded-full items-center justify-center mr-2 border-2 ${sleep === num ? "bg-[#0D9488] border-[#0D9488]" : "bg-white border-slate-100"}`}
+                >
+                  <Text className={`font-bold ${sleep === num ? "text-white" : "text-slate-400"}`}>{num}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <TextInput 
+              value={notes} 
+              onChangeText={setNotes} 
+              placeholder="What's on your mind?..." 
+              multiline 
+              className="bg-slate-50 rounded-3xl p-5 h-28 mb-6 text-slate-800 border border-slate-100" 
+              textAlignVertical="top"
+            />
+
+            <TouchableOpacity 
+              onPress={handleSave} 
+              disabled={loading}
+              className="bg-[#0D9488] py-5 rounded-[25px] flex-row justify-center items-center"
             >
-              <View>
-                <Text className="text-gray-900 font-bold">{moment(entry.date).format("MMM D, YYYY")}</Text>
-                <Text className="text-gray-600 mt-1">
-                  Mood: {moodEmojis[entry.mood - 1]}, Stress: {stressEmojis[entry.stress - 1]}, Sleep: {entry.sleep}h
-                </Text>
-                {entry.notes ? <Text className="text-gray-500 mt-1 italic">"{entry.notes}"</Text> : null}
-              </View>
-              <TouchableOpacity onPress={() => handleDelete(entry.id)} className="p-2 bg-rose-50 rounded-xl">
-                <Feather name="trash-2" size={20} color="#fb7185" />
-              </TouchableOpacity>
-            </View>
-          ))
-        )}
+              {loading ? <ActivityIndicator color="white" /> : (
+                <>
+                  <Text className="text-white font-black text-lg uppercase tracking-tighter mr-2">SAVE LOG</Text>
+                  <Feather name="arrow-right" size={20} color="white" />
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
 
-        <View className="h-24" />
-      </ScrollView>
+          {/* --- HISTORY SECTION --- */}
+          <View className="px-6 mt-10">
+            <Text className="text-2xl font-black text-slate-900 mb-6">Your Journey</Text>
+            
+            {history.map((item) => {
+              const moodIcon = moodOptions.find(m => m.val === item.mood) || moodOptions[2];
+              return (
+                <View key={item.id} className="bg-white rounded-[30px] p-5 mb-4 shadow-sm border border-slate-100">
+                  <View className="flex-row items-center">
+                    <View className="bg-purple-50 w-14 h-14 rounded-2xl items-center justify-center mr-4">
+                      <Text className="text-3xl">{moodIcon.emoji}</Text>
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-slate-400 text-[10px] font-bold uppercase">{moment(item.date).format("MMM DD, YYYY")}</Text>
+                      <Text className="text-slate-900 font-black text-lg">{moodIcon.label}</Text>
+                      <View className="flex-row mt-1">
+                        <View className="bg-emerald-50 px-2 py-0.5 rounded mr-2"><Text className="text-[#0D9488] text-[9px] font-bold">STRESS {item.stress}</Text></View>
+                        <View className="bg-emerald-50 px-2 py-0.5 rounded"><Text className="text-[#0D9488] text-[9px] font-bold">🌙 {item.sleep}H SLEEP</Text></View>
+                      </View>
+                    </View>
+                    <View className="flex-row">
+                      <TouchableOpacity onPress={() => {
+                        setEditingId(item.id); setMood(item.mood); setStress(item.stress); setSleep(item.sleep); setNotes(item.notes);
+                      }} className="p-2 bg-slate-50 rounded-full mr-2">
+                        <Feather name="edit-3" size={16} color="#0D9488" />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleDelete(item.id)} className="p-2 bg-rose-50 rounded-full">
+                        <Feather name="trash-2" size={16} color="#f43f5e" />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  {item.notes ? (
+                    <View className="mt-3 pt-3 border-t border-slate-50">
+                      <Text className="text-slate-500 italic text-sm">"{item.notes}"</Text>
+                    </View>
+                  ) : null}
+                </View>
+              );
+            })}
+          </View>
+
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
