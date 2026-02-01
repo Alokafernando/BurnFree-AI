@@ -4,38 +4,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, View, Text } from "react-native";
 
 const TAB_CONFIG = [
-  { 
-    name: "home", 
-    label: "Home", 
-    icon: "home",          
-    iconInactive: "home-outline"
-  },
-  { 
-    name: "mood", 
-    label: "Mood", 
-    icon: "emoticon-happy",
-    iconInactive: "emoticon-happy-outline"
-  },
-  { 
-    name: "work", 
-    label: "Work", 
-    icon: "briefcase",     
-    iconInactive: "briefcase-outline"
-  },
-  { 
-    name: "income", 
-    label: "Income", 
-    icon: "cash",            
-    iconInactive: "cash-multiple-outline"
-  },
-  { 
-    name: "profile", 
-    label: "Profile", 
-    icon: "account-circle",
-    iconInactive: "account-circle-outline"
-  },
+  { name: "home", label: "Home", icon: "home" },
+  { name: "mood", label: "Mood", icon: "emoticon-happy" },
+  { name: "work", label: "Work", icon: "briefcase" },
+  { name: "income", label: "Income", icon: "cash" },
+  { name: "profile", label: "Profile", icon: "account-circle" },
 ];
-
 
 const DashboardLayout = () => {
   return (
@@ -43,7 +17,7 @@ const DashboardLayout = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#ffffff",
+        tabBarActiveTintColor: "#fff",
         tabBarInactiveTintColor: "#99f6e4",
         tabBarStyle: {
           position: "absolute",
@@ -80,11 +54,7 @@ const DashboardLayout = () => {
 
 const TabItem = ({ icon, label, color, focused }: any) => (
   <View style={{ alignItems: "center", justifyContent: "center", width: 60 }}>
-    <MaterialCommunityIcons
-      name={focused ? icon : `${icon}-outline`}
-      size={26}
-      color={color}
-    />
+    <MaterialCommunityIcons name={icon} size={26} color={color} />
     <Text
       numberOfLines={1}
       style={{
@@ -97,14 +67,12 @@ const TabItem = ({ icon, label, color, focused }: any) => (
     >
       {label}
     </Text>
-
-    {/* Active Indicator */}
     <View
       style={{
         height: 4,
         width: 20,
         borderRadius: 2,
-        backgroundColor: focused ? "#ffffff" : "transparent",
+        backgroundColor: focused ? "#fff" : "transparent",
         marginTop: 4,
       }}
     />

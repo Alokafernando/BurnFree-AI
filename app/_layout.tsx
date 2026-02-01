@@ -1,19 +1,16 @@
-import React, { useEffect } from "react"
-import { View } from "react-native"
-import { Slot } from "expo-router"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { Provider, useDispatch } from "react-redux"
-import { onAuthStateChanged } from "firebase/auth"
+import React, { useEffect } from "react";
+import { Provider, useDispatch } from "react-redux";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Slot } from "expo-router";
+import { onAuthStateChanged } from "firebase/auth";
 
-import { store } from "@/store"
-import { auth } from "@/services/firebase"
-import { setUser } from "@/store/slices/authSlice"
-
-import { GlobalLoader } from "../components/GlobalLoader"
+import { store } from "@/store";
+import { auth } from "@/services/firebase";
+import { setUser } from "@/store/slices/authSlice";
+import { GlobalLoader } from "@/components/GlobalLoader";
 
 const RootLayoutContent = () => {
-  const insets = useSafeAreaInsets()
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (usr) => {
@@ -24,31 +21,28 @@ const RootLayoutContent = () => {
             email: usr.email,
             displayName: usr.displayName,
           })
-        )
+        );
       } else {
-        dispatch(setUser(null))
+        dispatch(setUser(null));
       }
-    })
+    });
 
-    return () => unsubscribe()
-  }, [dispatch])
+    return () => unsubscribe();
+  }, [dispatch]);
 
   return (
-    <View style={{ marginTop: insets.top, flex: 1 }}>
+    <SafeAreaProvider style={{ flex: 1 }}>
+      {/* This Slot will render (auth) or (dashboard) layouts */}
       <Slot />
-
       <GlobalLoader />
-    </View>
-  )
-}
+    </SafeAreaProvider>
+  );
+};
 
+const RootLayout = () => (
+  <Provider store={store}>
+    <RootLayoutContent />
+  </Provider>
+);
 
-const RootLayout = () => {
-  return (
-    <Provider store={store}>
-      <RootLayoutContent />
-    </Provider>
-  )
-}
-
-export default RootLayout
+export default RootLayout;

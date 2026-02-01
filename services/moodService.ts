@@ -1,26 +1,41 @@
 import { Mood, MoodError, MoodLevel } from "@/types/Mood";
 import { auth, db } from "./firebase";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  Timestamp,
+} from "firebase/firestore";
 
+// Collection name
+const MOODS_COLLECTION = "moods";
+
+// --- CREATE ---
 export const addMood = async (
   mood: MoodLevel,
-  note?: string
+  notes?: string
 ): Promise<Mood | MoodError> => {
   try {
     const user = auth.currentUser;
-
     if (!user) {
       return { code: "unauthorized", message: "User not logged in." };
     }
 
     const moodData: Omit<Mood, "id"> = {
       userId: user.uid,
-      moodLevel: mood,   
-      notes: note,       
+      moodLevel: mood,
+      notes,
       createdAt: Timestamp.now(),
     };
 
-    const docRef = await addDoc(collection(db, "moods"), moodData);
+    const docRef = await addDoc(collection(db, MOODS_COLLECTION), moodData);
 
     return { id: docRef.id, ...moodData };
   } catch (error: any) {
@@ -31,3 +46,4 @@ export const addMood = async (
     };
   }
 };
+

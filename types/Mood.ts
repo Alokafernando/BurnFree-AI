@@ -8,6 +8,8 @@ export interface Mood {
   moodLevel: MoodLevel;
   notes?: string;
   createdAt: Timestamp;
+  stress?: number;
+  sleep?: number;
 }
 
 export interface MoodError {
