@@ -130,3 +130,18 @@ export const updateIncome = async (
 };
 
 
+export const deleteIncome = async (
+  id: string
+): Promise<true | IncomeError> => {
+  try {
+    const docRef = doc(db, INCOME_COLLECTION, id);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error: any) {
+    console.error("Delete income error:", error);
+    return {
+      code: error.code || "income_delete_failed",
+      message: error.message || "Failed to delete income.",
+    };
+  }
+};
