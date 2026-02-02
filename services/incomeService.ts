@@ -53,3 +53,35 @@ export const addIncome = async (
     };
   }
 };
+
+
+export const getIncomeForUser = async (): Promise<
+  Income[] | IncomeError
+> => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      return { code: "unauthorized", message: "User not logged in." };
+    }
+
+    const q = query(
+      collection(db, INCOME_COLLECTION),
+      where("userId", "==", user.uid),
+      orderBy("date", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map(docSnap => ({
+      id: docSnap.id,
+      ...(docSnap.data() as Omit<Income, "id">),
+    }));
+  } catch (error: any) {
+    console.error("Get income error:", error);
+    return {
+      code: error.code || "income_fetch_failed",
+      message: error.message || "Failed to retrieve income.",
+    };
+  }
+};
+
