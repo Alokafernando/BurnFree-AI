@@ -105,3 +105,28 @@ export const getIncomeById = async (
   }
 };
 
+
+export const updateIncome = async (
+  id: string,
+  updates: Partial<Omit<Income, "id" | "userId" | "createdAt">>
+): Promise<Income | IncomeError> => {
+  try {
+    const docRef = doc(db, INCOME_COLLECTION, id);
+
+    await updateDoc(docRef, updates);
+
+    const updatedSnap = await getDoc(docRef);
+    return {
+      id: updatedSnap.id,
+      ...(updatedSnap.data() as Omit<Income, "id">),
+    };
+  } catch (error: any) {
+    console.error("Update income error:", error);
+    return {
+      code: error.code || "income_update_failed",
+      message: error.message || "Failed to update income.",
+    };
+  }
+};
+
+
