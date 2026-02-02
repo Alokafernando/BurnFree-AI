@@ -85,3 +85,23 @@ export const getIncomeForUser = async (): Promise<
   }
 };
 
+
+export const getIncomeById = async (
+  id: string
+): Promise<Income | null | IncomeError> => {
+  try {
+    const docRef = doc(db, INCOME_COLLECTION, id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) return null;
+
+    return { id: docSnap.id, ...(docSnap.data() as Omit<Income, "id">) };
+  } catch (error: any) {
+    console.error("Get income by ID error:", error);
+    return {
+      code: error.code || "income_fetch_failed",
+      message: error.message || "Failed to retrieve income.",
+    };
+  }
+};
+
