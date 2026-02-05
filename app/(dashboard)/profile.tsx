@@ -121,8 +121,9 @@ export default function Profile() {
       <LinearGradient colors={["#F0FDFA", "#EFF6FF", "#FFFFFF"]} className="absolute inset-0" />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }} className="flex-1">
-        {/* HEADER */}
-        <View className="px-6 pt-6 items-center pb-4">
+        
+        {/* HEADER - Updated pt-24 and mt-10 to move it down significantly */}
+        <View className="px-6 pt-24 items-center pb-4 mt-10">
           <View className="relative">
             <View className="w-24 h-24 rounded-[35px] bg-white shadow-xl shadow-teal-900/10 items-center justify-center border-2 border-white overflow-hidden">
               {profileImage ? (
