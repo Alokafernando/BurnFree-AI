@@ -99,7 +99,11 @@ const IncomeTracker = () => {
     ]);
   };
 
-  
+  // ---------------- TOTAL ----------------
+  const totalIncome = incomeLogs.reduce(
+    (sum, e) => sum + e.amount,
+    0
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9FAFB]">
