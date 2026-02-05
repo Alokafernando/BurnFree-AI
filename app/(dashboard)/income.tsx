@@ -47,6 +47,38 @@ const IncomeTracker = () => {
     fetchIncomeLogs();
   }, []);
 
+  // ---------------- SAVE / UPDATE ----------------
+  const handleSave = async () => {
+    if (!client || !amount) {
+      return Alert.alert("Missing info", "Please fill all fields");
+    }
+
+    setLoading(true);
+
+    const date = new Date().toISOString().split("T")[0];
+
+    const result = editingId
+      ? await updateIncome(editingId, {
+          client,
+          amount: Number(amount),
+          type,
+          date,
+        })
+      : await addIncome(client, Number(amount), type, date);
+
+    if ("code" in result) {
+      Alert.alert("Error", result.message);
+    } else {
+      setClient("");
+      setAmount("");
+      setType("freelance");
+      setEditingId(null);
+      fetchIncomeLogs();
+    }
+
+    setLoading(false);
+  };
+
   
 
   return (
