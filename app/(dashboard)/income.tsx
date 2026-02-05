@@ -79,6 +79,26 @@ const IncomeTracker = () => {
     setLoading(false);
   };
 
+  // ---------------- DELETE ----------------
+  const handleDelete = async (id: string) => {
+    Alert.alert("Delete Entry", "Are you sure?", [
+      { text: "Cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          const result = await deleteIncome(id);
+
+          if (result !== true) {
+            Alert.alert("Error", result.message);
+          }
+
+          fetchIncomeLogs();
+        },
+      },
+    ]);
+  };
+
   
 
   return (
