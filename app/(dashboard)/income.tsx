@@ -59,11 +59,11 @@ const IncomeTracker = () => {
 
     const result = editingId
       ? await updateIncome(editingId, {
-          client,
-          amount: Number(amount),
-          type,
-          date,
-        })
+        client,
+        amount: Number(amount),
+        type,
+        date,
+      })
       : await addIncome(client, Number(amount), type, date);
 
     if ("code" in result) {
@@ -178,36 +178,68 @@ const IncomeTracker = () => {
               No income logged yet
             </Text>
           ) : (
-            incomeLogs.map(entry => (
+            incomeLogs.map((entry) => (
               <TouchableOpacity
                 key={entry.id}
                 activeOpacity={0.8}
                 onPress={() => {
+                  // Load into edit mode
                   setEditingId(entry.id);
                   setClient(entry.client);
                   setAmount(String(entry.amount));
                   setType(entry.type);
                 }}
-                className="bg-white rounded-2xl p-4 mb-3 shadow-sm flex-row justify-between items-center"
+                className="bg-white rounded-[30px] p-5 mb-4 shadow-sm border border-slate-100"
               >
-                <View>
-                  <Text className="font-bold text-slate-800">
-                    {entry.client}
-                  </Text>
-                  <Text className="text-slate-500 text-sm">
-                    ${entry.amount.toFixed(2)} • {entry.type}
-                  </Text>
-                  <Text className="text-slate-400 text-xs">
-                    {entry.date}
-                  </Text>
-                </View>
+                <View className="flex-row items-center">
 
-                <TouchableOpacity
-                  onPress={() => handleDelete(entry.id)}
-                  className="p-3 bg-rose-50 rounded-full"
-                >
-                  <FontAwesome5 name="trash" size={16} color="#E11D48" />
-                </TouchableOpacity>
+                  {/* Left Icon Box */}
+                  <View className="bg-emerald-50 w-14 h-14 rounded-2xl items-center justify-center mr-4">
+                    <Text className="text-2xl font-bold">💰</Text>
+                  </View>
+
+                  {/* Income Info */}
+                  <View className="flex-1">
+
+                    {/* Date */}
+                    <Text className="text-slate-400 text-[10px] font-bold uppercase">
+                      {entry.date}
+                    </Text>
+
+                    {/* Client */}
+                    <Text className="text-slate-900 font-black text-lg">
+                      {entry.client}
+                    </Text>
+
+                    {/* Badges Row */}
+                    <View className="flex-row mt-1">
+
+                      {/* Type Badge */}
+                      <View className="bg-emerald-50 px-2 py-0.5 rounded mr-2">
+                        <Text className="text-[#0D9488] text-[9.5px] font-bold">
+                          {entry.type}
+                        </Text>
+                      </View>
+
+                      {/* Amount Badge */}
+                      <View className="bg-emerald-50 px-2 py-0.5 rounded">
+                        <Text className="text-[#0D9488] text-[9.5px] font-bold">
+                          ${entry.amount.toFixed(2)}
+                        </Text>
+                      </View>
+
+                    </View>
+                  </View>
+
+                  {/* Delete Button */}
+                  <TouchableOpacity
+                    onPress={() => handleDelete(entry.id)}
+                    className="p-3 bg-rose-50 rounded-full"
+                  >
+                    <FontAwesome5 name="trash" size={16} color="#E11D48" />
+                  </TouchableOpacity>
+
+                </View>
               </TouchableOpacity>
             ))
           )}
