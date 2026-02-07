@@ -14,7 +14,7 @@ export default function Dashboard({ navigation }: any) {
   const [burnout, setBurnout] = useState<BurnoutResult>({
     score: 0,
     level: "Low",
-    color: "#0D9488", 
+    color: "#0D9488", // Back to BurnFree Teal
     description: "",
   });
   const [advice, setAdvice] = useState<AIAdvice[]>([]);
