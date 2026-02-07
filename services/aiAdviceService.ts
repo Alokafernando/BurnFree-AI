@@ -1,77 +1,117 @@
-// aiAdviceService.ts
-import OpenAI from "openai";
 import { AIAdvice } from "@/types/aiAdvice";
 import { BurnoutResult } from "@/types/burnout";
 
-// Create OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Make sure to set this in your .env
-});
+export const generateAIAdvice = (
+  burnout: BurnoutResult,
+  totalIncome: number,
+  avgMood: number,
+  avgWorkHours: number
+): AIAdvice[] => {
+  const adviceList: AIAdvice[] = [];
 
-interface AIAdviceRequest {
-  burnout: BurnoutResult;
-  totalIncome: number;
-  avgMood: number;
-  avgWorkHours: number;
-}
-
-export const generateAIAdvice = async ({
-  burnout,
-  totalIncome,
-  avgMood,
-  avgWorkHours,
-}: AIAdviceRequest): Promise<AIAdvice[]> => {
-  try {
-    // Construct prompt for GPT
-    const prompt = `
-You are a personal wellness and productivity assistant.
-Given the following user metrics, provide concise advice. Format each advice as a JSON object with fields: id, title, message, type, priority.
-
-User Metrics:
-- Burnout Score: ${burnout.score} (0-100)
-- Average Mood: ${avgMood} (1-5)
-- Average Work Hours: ${avgWorkHours} hours/day
-- Total Income: $${totalIncome}
-
-Return at least 4 pieces of advice covering:
-1. Burnout/wellness
-2. Mood
-3. Workload/productivity
-4. Income/financial stability
-
-Example response format:
-[
-  {
-    "id": "burnout_high",
-    "title": "High Burnout Risk",
-    "message": "Your workload and stress levels are high. Take breaks and rest.",
-    "type": "burnout",
-    "priority": "high"
-  }
-]
-`;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 300,
+  // Burnout Advice
+  if (burnout.score >= 75) {
+    adviceList.push({
+      id: "burnout_critical",
+      title: "Severe Burnout Risk",
+      message: "You are showing signs of severe burnout. Take immediate rest and reduce workload.",
+      type: "burnout",
+      priority: "critical",
+      createdAt: new Date(),
     });
-
-    const aiText = response.choices[0].message?.content;
-    if (!aiText) return [];
-
-    // Parse AI JSON safely
-    let adviceList: AIAdvice[] = [];
-    try {
-      adviceList = JSON.parse(aiText);
-    } catch (err) {
-      console.error("Failed to parse AI advice JSON:", err);
-    }
-
-    return adviceList;
-  } catch (error) {
-    console.error("Error generating AI advice:", error);
-    return [];
+  } 
+  else if (burnout.score >= 50) {
+    adviceList.push({
+      id: "burnout_high",
+      title: "High Burnout Risk",
+      message: "Your stress and work hours are high. Consider scheduling breaks.",
+      type: "burnout",
+      priority: "high",
+      createdAt: new Date(),
+    });
+  } 
+  else if (burnout.score >= 25) {
+    adviceList.push({
+      id: "burnout_moderate",
+      title: "Moderate Burnout",
+      message: "You’re doing okay, but monitor your stress levels.",
+      type: "burnout",
+      priority: "medium",
+      createdAt: new Date(),
+    });
+  } 
+  else {
+    adviceList.push({
+      id: "burnout_low",
+      title: "Great Balance",
+      message: "You’re maintaining a healthy work-life balance. Keep it up!",
+      type: "wellness",
+      priority: "low",
+      createdAt: new Date(),
+    });
   }
+
+  // ------------------------------------------
+  // Income Advice
+  // ------------------------------------------
+  if (totalIncome < 1000) {
+    adviceList.push({
+      id: "income_low",
+      title: "Low Income Stability",
+      message: "Your income is currently low. Consider adding new clients or projects.",
+      type: "income",
+      priority: "high",
+      createdAt: new Date(),
+    });
+  } 
+  else if (totalIncome < 3000) {
+    adviceList.push({
+      id: "income_mid",
+      title: "Income Needs Growth",
+      message: "Income is moderate. Scaling your work could improve stability.",
+      type: "income",
+      priority: "medium",
+      createdAt: new Date(),
+    });
+  } 
+  else {
+    adviceList.push({
+      id: "income_good",
+      title: "Stable Income",
+      message: "Your income level is stable and healthy.",
+      type: "income",
+      priority: "low",
+      createdAt: new Date(),
+    });
+  }
+
+  // ------------------------------------------
+  // Mood Advice
+  // ------------------------------------------
+  if (avgMood <= 2) {
+    adviceList.push({
+      id: "mood_low",
+      title: "Low Mood Detected",
+      message: "Your mood levels are low. Consider rest or recreational activities.",
+      type: "wellness",
+      priority: "high",
+      createdAt: new Date(),
+    });
+  }
+
+  // ------------------------------------------
+  // Workload Advice
+  // ------------------------------------------
+  if (avgWorkHours >= 10) {
+    adviceList.push({
+      id: "work_overload",
+      title: "Work Overload",
+      message: "You are working long hours. Reduce workload to avoid burnout.",
+      type: "productivity",
+      priority: "high",
+      createdAt: new Date(),
+    });
+  }
+
+  return adviceList;
 };
