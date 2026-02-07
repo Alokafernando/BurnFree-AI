@@ -37,12 +37,14 @@ export default function ChangePassword() {
         { text: "OK", onPress: () => router.replace("/(dashboard)/profile") },
       ]);
     } catch (error: any) {
-      if (error.code === "auth/wrong-password") {
+      console.log("Change password error:", error);
+
+      if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
         Alert.alert("Error", "Current password is incorrect");
       } else if (error.code === "auth/requires-recent-login") {
         Alert.alert("Session Expired", "Please log in again and retry");
       } else {
-        Alert.alert("Error", "Failed to update password");
+        Alert.alert("Error", "Failed to update password. Try again.");
       }
     } finally {
       setLoading(false);
@@ -52,18 +54,18 @@ export default function ChangePassword() {
   return (
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
-      <LinearGradient 
-        colors={["#CCFBF1", "#F0FDFA", "#FFFFFF"]} 
+      <LinearGradient
+        colors={["#CCFBF1", "#F0FDFA", "#FFFFFF"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 0.4 }}
-        className="absolute inset-0" 
+        className="absolute inset-0"
       />
 
       <View className="flex-1 px-6 pt-20">
         {/* Header Section */}
         <View className="flex-row items-center justify-between mb-10">
-          <TouchableOpacity 
-            onPress={() => router.replace("/(dashboard)/profile")} 
+          <TouchableOpacity
+            onPress={() => router.replace("/(dashboard)/profile")}
             className="bg-white p-3 rounded-2xl shadow-sm border border-teal-50"
           >
             <MaterialCommunityIcons name="arrow-left" size={24} color="#0D9488" />
@@ -83,7 +85,7 @@ export default function ChangePassword() {
 
         {/* Form Container */}
         <View className="bg-white/60 p-6 rounded-[40px] border border-white shadow-sm">
-          
+
           {/* Current Password */}
           <View className="mb-4">
             <Text className="text-[#0D9488] font-black text-[10px] uppercase tracking-[2px] ml-1 mb-2">Current Password</Text>
