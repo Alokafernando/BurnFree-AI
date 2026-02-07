@@ -39,29 +39,39 @@ const Login = () => {
   const validateEmail = (input: string) => /\S+@\S+\.\S+/.test(input)
 
   const handleLogin = async () => {
-    let currentErrors: ValidationErrors = {}
+  let currentErrors: ValidationErrors = {}
 
-    if (!validateEmail(email)) currentErrors.email = "Please enter a valid email address."
-    if (!password) currentErrors.password = "Password is required."
+  if (!validateEmail(email))
+    currentErrors.email = "Please enter a valid email address."
 
-    if (Object.keys(currentErrors).length > 0) {
-      setErrors(currentErrors)
+  if (!password)
+    currentErrors.password = "Password is required."
+
+  if (Object.keys(currentErrors).length > 0) {
+    setErrors(currentErrors)
+    return
+  }
+
+  setErrors({})
+  startLoading()
+
+  try {
+    const result = await loginUser(email, password)
+
+    if ("code" in result) {
+      Alert.alert("Login Failed", "Invalid email or password. Please try again.")
       return
     }
 
-    setErrors({})
-    startLoading()
-    try {
+    router.replace("/(dashboard)/home")
 
-      await loginUser(email, password)
-      router.replace("/home")
-
-    } catch (e: any) {
-      Alert.alert("Login Failed", "Invalid credentials provided")
-    } finally {
-      stopLoading()
-    }
+  } catch (error) {
+    Alert.alert("Login Failed", "Something went wrong.")
+  } finally {
+    stopLoading()
   }
+}
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
