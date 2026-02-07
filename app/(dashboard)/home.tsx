@@ -7,6 +7,7 @@ import { calculateBurnoutScore, BurnoutResult } from "@/services/burnoutService"
 import { generateAIAdvice } from "@/services/aiAdviceService";
 import { AIAdvice } from "@/types/aiAdvice";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
 interface MoodEntry {
   mood: number;
@@ -28,6 +29,7 @@ interface IncomeEntry {
 export default function Dashboard({ navigation }: any) {
   const userId = auth.currentUser?.uid;
 
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [burnout, setBurnout] = useState<BurnoutResult>({
     score: 0,
@@ -182,9 +184,9 @@ export default function Dashboard({ navigation }: any) {
         <View className="px-6">
           <Text className="text-xl font-black text-slate-900 mb-4 ml-2">Actions</Text>
           <View className="flex-row justify-between">
-            <QuickActionBtn icon="smile-beam" label="Mood" onPress={() => navigation.navigate("MoodLogger")} />
-            <QuickActionBtn icon="briefcase" label="Work" onPress={() => navigation.navigate("WorkTracker")} />
-            <QuickActionBtn icon="dollar-sign" label="Income" onPress={() => navigation.navigate("IncomeTracker")} />
+            <QuickActionBtn icon="smile-beam" label="Mood" onPress={() => router.push("/mood")} />
+            <QuickActionBtn icon="briefcase" label="Work" onPress={() => router.push("/work")} />
+            <QuickActionBtn icon="dollar-sign" label="Income" onPress={() => router.push("/income")} />
           </View>
         </View>
       </ScrollView>
