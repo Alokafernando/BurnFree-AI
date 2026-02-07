@@ -18,7 +18,6 @@ import {
 import { auth, db } from "./firebase";
 
 import { User } from "../types/User";
-import { Scan } from "../types/Scan";
 
 interface UpdateUserOptions extends Partial<User> {
     newPassword?: string;
