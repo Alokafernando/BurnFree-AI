@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, StatusBar } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -51,78 +51,104 @@ export default function ChangePassword() {
 
   return (
     <View className="flex-1 bg-white">
-      <LinearGradient
-        colors={["#F0FDFA", "#EFF6FF", "#FFFFFF"]}
-        className="absolute inset-0"
+      <StatusBar barStyle="dark-content" />
+      <LinearGradient 
+        colors={["#CCFBF1", "#F0FDFA", "#FFFFFF"]} 
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 0.4 }}
+        className="absolute inset-0" 
       />
 
-      <View className="flex-1 px-6 pt-10">
-        {/* Header */}
-        <View className="flex-row items-center mb-8">
-          <TouchableOpacity onPress={() => router.replace("/(dashboard)/profile")} className="mr-3">
-            <MaterialCommunityIcons name="arrow-left" size={26} color="#0D9488" />
+      <View className="flex-1 px-6 pt-20">
+        {/* Header Section */}
+        <View className="flex-row items-center justify-between mb-10">
+          <TouchableOpacity 
+            onPress={() => router.replace("/(dashboard)/profile")} 
+            className="bg-white p-3 rounded-2xl shadow-sm border border-teal-50"
+          >
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#0D9488" />
           </TouchableOpacity>
-          <Text className="text-2xl font-black text-slate-900">
-            Change Password
+          <Text className="text-2xl font-black text-slate-900 flex-1 ml-4 tracking-tighter">Security</Text>
+        </View>
+
+        {/* Security Icon Header */}
+        <View className="items-center mb-8">
+          <View className="bg-white p-6 rounded-[35px] shadow-xl shadow-teal-900/10 border border-teal-50">
+            <MaterialCommunityIcons name="shield-lock-outline" size={50} color="#0D9488" />
+          </View>
+          <Text className="text-slate-400 font-bold mt-4 text-center px-10">
+            Ensure your new password is at least 6 characters long.
           </Text>
         </View>
 
-        {/* Current Password */}
-        <View className="mb-4">
-          <Text className="text-slate-600 font-semibold mb-1">
-            Current Password
-          </Text>
-          <TextInput
-            value={currentPassword}
-            onChangeText={setCurrentPassword}
-            placeholder="Enter current password"
-            secureTextEntry
-            className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800"
-          />
-        </View>
+        {/* Form Container */}
+        <View className="bg-white/60 p-6 rounded-[40px] border border-white shadow-sm">
+          
+          {/* Current Password */}
+          <View className="mb-4">
+            <Text className="text-[#0D9488] font-black text-[10px] uppercase tracking-[2px] ml-1 mb-2">Current Password</Text>
+            <View className="flex-row items-center bg-white border border-teal-50 rounded-2xl px-4 py-4 shadow-sm">
+              <MaterialCommunityIcons name="lock-outline" size={20} color="#0D9488" className="mr-3" />
+              <TextInput
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                placeholder="••••••••"
+                secureTextEntry
+                placeholderTextColor="#94A3B8"
+                className="flex-1 text-slate-800 font-bold text-base"
+              />
+            </View>
+          </View>
 
-        {/* New Password */}
-        <View className="mb-4">
-          <Text className="text-slate-600 font-semibold mb-1">
-            New Password
-          </Text>
-          <TextInput
-            value={newPassword}
-            onChangeText={setNewPassword}
-            placeholder="Enter new password"
-            secureTextEntry
-            className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800"
-          />
-        </View>
+          {/* New Password */}
+          <View className="mb-4">
+            <Text className="text-[#0D9488] font-black text-[10px] uppercase tracking-[2px] ml-1 mb-2">New Password</Text>
+            <View className="flex-row items-center bg-white border border-teal-50 rounded-2xl px-4 py-4 shadow-sm">
+              <MaterialCommunityIcons name="key-outline" size={20} color="#0D9488" className="mr-3" />
+              <TextInput
+                value={newPassword}
+                onChangeText={setNewPassword}
+                placeholder="••••••••"
+                secureTextEntry
+                placeholderTextColor="#94A3B8"
+                className="flex-1 text-slate-800 font-bold text-base"
+              />
+            </View>
+          </View>
 
-        {/* Confirm Password */}
-        <View className="mb-8">
-          <Text className="text-slate-600 font-semibold mb-1">
-            Confirm Password
-          </Text>
-          <TextInput
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            placeholder="Confirm new password"
-            secureTextEntry
-            className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800"
-          />
-        </View>
+          {/* Confirm Password */}
+          <View className="mb-8">
+            <Text className="text-[#0D9488] font-black text-[10px] uppercase tracking-[2px] ml-1 mb-2">Confirm New Password</Text>
+            <View className="flex-row items-center bg-white border border-teal-50 rounded-2xl px-4 py-4 shadow-sm">
+              <MaterialCommunityIcons name="check-decagram-outline" size={20} color="#0D9488" className="mr-3" />
+              <TextInput
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="••••••••"
+                secureTextEntry
+                placeholderTextColor="#94A3B8"
+                className="flex-1 text-slate-800 font-bold text-base"
+              />
+            </View>
+          </View>
 
-        {/* Submit */}
-        <TouchableOpacity
-          disabled={loading}
-          onPress={handleChangePassword}
-          className="bg-teal-600 py-4 rounded-2xl items-center shadow-md"
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text className="text-white font-black text-lg">
-              Update Password
-            </Text>
-          )}
-        </TouchableOpacity>
+          {/* Submit Button */}
+          <TouchableOpacity
+            onPress={handleChangePassword}
+            disabled={loading}
+            activeOpacity={0.8}
+            className="bg-[#0D9488] py-5 rounded-[25px] shadow-lg shadow-teal-900/30 flex-row justify-center items-center"
+          >
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <>
+                <MaterialCommunityIcons name="update" size={20} color="white" style={{ marginRight: 8 }} />
+                <Text className="text-white font-black text-lg tracking-tight">Update Password</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
