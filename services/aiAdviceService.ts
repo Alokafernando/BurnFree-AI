@@ -51,9 +51,7 @@ export const generateAIAdvice = (
     });
   }
 
-  // ------------------------------------------
   // Income Advice
-  // ------------------------------------------
   if (totalIncome < 1000) {
     adviceList.push({
       id: "income_low",
@@ -85,9 +83,7 @@ export const generateAIAdvice = (
     });
   }
 
-  // ------------------------------------------
   // Mood Advice
-  // ------------------------------------------
   if (avgMood <= 2) {
     adviceList.push({
       id: "mood_low",
@@ -99,9 +95,7 @@ export const generateAIAdvice = (
     });
   }
 
-  // ------------------------------------------
   // Workload Advice
-  // ------------------------------------------
   if (avgWorkHours >= 10) {
     adviceList.push({
       id: "work_overload",

@@ -1,16 +1,12 @@
 import { BurnoutMetrics, BurnoutResult } from "@/types/burnout";
 
-// --------------------------------------------
 // Calculate Burnout Score
-// --------------------------------------------
 export const calculateBurnoutScore = (
   metrics: BurnoutMetrics
 ): BurnoutResult => {
   const { avgMood, avgStress, avgSleep, avgWorkHours } = metrics;
 
-  // -------------------------------
-  // Score Formula (custom logic)
-  // -------------------------------
+  // Score calculation
   let score =
     avgWorkHours * 5 +      // Work impact
     avgStress * 8 -         // Stress impact
@@ -20,9 +16,7 @@ export const calculateBurnoutScore = (
   // Normalize score 0–100
   score = Math.max(0, Math.min(100, Math.round(score)));
 
-  // -------------------------------
   // Determine Level
-  // -------------------------------
   let level: BurnoutResult["level"];
   let color = "";
   let description = "";

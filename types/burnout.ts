@@ -1,9 +1,5 @@
 
-export type BurnoutLevel =
-  | "Low"
-  | "Moderate"
-  | "High"
-  | "Severe";
+export type BurnoutLevel = | "Low" | "Moderate" | "High" | "Severe" | "No Data";
 
 export interface BurnoutResult {
   score: number;         
