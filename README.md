@@ -58,10 +58,35 @@ You can download and install **BurnFree AI** on your Android device:
 
 Here are some screenshots of **BurnFree AI** in action:
 
-| Dashboard | Mood Tracker | Stress Tracker | Sleep Tracker |
-|-----------|--------------|----------------|---------------|
-| ![Dashboard](assets/screenshots/dashboard.png) | ![Mood Tracker](assets/screenshots/mood_tracker.png) | ![Stress Tracker](assets/screenshots/stress_tracker.png) | ![Sleep Tracker](assets/screenshots/sleep_tracker.png) |
+### 🔐 Login Screen
+<img src="assets/screenshots/login.jpeg" width="300"/>
 
+### 🔐 Register Screen
+<img src="assets/screenshots/register.jpeg" width="300"/>
+
+### 🔐 Forget Password
+<img src="assets/screenshots/forget-password.jpeg" width="300"/>
+
+### 📊 Dashboard
+<img src="assets/screenshots/dashboard.jpeg" width="300"/>
+
+### 📈 Income / Stats Screen
+<img src="assets/screenshots/income.jpeg" width="300"/>
+
+### 🧠 Mood Tracker
+<img src="assets/screenshots/mood.jpeg" width="300"/>
+
+### ⚙️ Settings
+<img src="assets/screenshots/setting.jpeg" width="300"/>
+
+### 👤 User Details
+<img src="assets/screenshots/user-details.jpeg" width="300"/>
+
+### 🏢 Work / Activity Screen
+<img src="assets/screenshots/work.jpeg" width="300"/>
+
+### 🖥 Application Overview
+<img src="assets/screenshots/application.jpeg" width="300"/>
 
 ---
 
