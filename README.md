@@ -291,9 +291,9 @@ You are free to use, modify, and distribute this project for personal and commer
 
 For any questions, suggestions, or issues regarding **BurnFree AI**, you can reach out to the author:  
 
-- **Email:** your-email@example.com  
-- **GitHub Issues:** [Submit an Issue](https://github.com/your-username/BurnFree-AI/issues)  
-- **LinkedIn:** [Your LinkedIn Profile](https://www.linkedin.com/in/your-profile)  
+- **Email:** buddhikafernando19@gmail.com
+- **GitHub Issues:** [Submit an Issue]([https://github.com/Alokafernando/BurnFree-AI/issues](https://github.com/Alokafernando))  
+- **LinkedIn:** [Buddhika Fernando](https://www.linkedin.com/in/buddhika-fernando-73606131a/)  
 
 We highly appreciate your feedback and contributions to improve the app!
 
