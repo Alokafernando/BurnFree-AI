@@ -13,20 +13,22 @@
 
 ## 📑 Table of Contents
 
-1. [Project Overview](#-project-overview)  
-2. [Features](#features)  
-3. [Technologies Used](#technologies-used)  
-4. [Project Structure](#project-structure)  
-5. [Installation & Setup](#installation--setup)  
-6. [Firebase Configuration](#firebase-configuration)  
-7. [AI Functionality](#ai-functionality)  
-8. [Future Enhancements](#future-enhancements)  
-9. [Author](#author)  
+1. [Project Overview](#project-overview)
+2. [Download the App](#-download-the-app)  
+3. [Screenshots](#-screenshots)  
+4. [Features](#features)  
+5. [Technologies Used](#technologies-used)  
+6. [Project Structure](#project-structure)  
+7. [Installation & Setup](#installation--setup)  
+8. [Firebase Configuration](#firebase-configuration)  
+9. [Future Enhancements](#future-enhancements)  
+10. [License](#license)  
+11. [Contact & Support](#contact--support)
 
 
 ---
 
-## About the Project
+## Project Overview
 
 **BurnFree AI** is a smart mobile application designed to help users monitor, analyze, and improve their mental well-being. The app allows users to track their **mood, stress levels, and sleep patterns** while providing **AI-driven insights** to guide them toward better emotional balance and burnout prevention.
 
@@ -37,6 +39,29 @@ Key highlights include:
 - Personalized insights and recommendations
 - Secure user accounts with cloud storage
 - AI-driven analysis for preventive mental health care
+
+---
+
+
+## 📥 Download the App
+
+You can download and install **BurnFree AI** on your Android device:
+
+- **APK (Android only):** [Download APK](#)
+
+> ⚠️ The link will be updated once the APK is available or the app is published via EAS Build.
+
+
+---
+
+## 📸 Screenshots
+
+Here are some screenshots of **BurnFree AI** in action:
+
+| Dashboard | Mood Tracker | Stress Tracker | Sleep Tracker |
+|-----------|--------------|----------------|---------------|
+| ![Dashboard](assets/screenshots/dashboard.png) | ![Mood Tracker](assets/screenshots/mood_tracker.png) | ![Stress Tracker](assets/screenshots/stress_tracker.png) | ![Sleep Tracker](assets/screenshots/sleep_tracker.png) |
+
 
 ---
 
@@ -203,6 +228,20 @@ export const db = getFirestore(app);
 
 ---
 
+## Future Enhancements
+
+BurnFree AI is actively being improved, and the following features are planned for future releases:
+
+- 🌐 **Multi-Language Support:** Allow users to interact with the app in multiple languages.  
+- 📈 **Advanced AI Analytics:** Improve AI predictions for mood, stress, and sleep patterns.  
+- 🗓 **Reminders & Notifications:** Remind users to log their mood, stress, and sleep.  
+- 🤝 **Community Support:** Add peer-support features or anonymous group discussions.  
+- 🧩 **Integration with Wearables:** Sync data from fitness trackers for more accurate health insights.  
+- 🎯 **Gamification:** Introduce achievements and goals to motivate consistent mental health tracking.  
+
+> These enhancements aim to make BurnFree AI more interactive, personalized, and effective for users.
+
+---
 
 ## Contact
 
@@ -212,5 +251,26 @@ Creator and maintainer of **BurnFree AI**
 - GitHub: [Your GitHub Profile](https://github.com/your-username)  
 
 This project was developed as part of academic and personal research in **Advanced Mobile Developer**.
+
+---
+
+## License
+
+This project is licensed under the **MIT License**.  
+
+You are free to use, modify, and distribute this project for personal and commercial purposes. See the [LICENSE](LICENSE) file for more details.
+
+---
+
+## Contact & Support
+
+For any questions, suggestions, or issues regarding **BurnFree AI**, you can reach out to the author:  
+
+- **Email:** your-email@example.com  
+- **GitHub Issues:** [Submit an Issue](https://github.com/your-username/BurnFree-AI/issues)  
+- **LinkedIn:** [Your LinkedIn Profile](https://www.linkedin.com/in/your-profile)  
+
+We highly appreciate your feedback and contributions to improve the app!
+
 
 
