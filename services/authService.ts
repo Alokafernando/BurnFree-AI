@@ -23,7 +23,7 @@ export const registerUser = async (
   email: string,
   password: string,
   confirmPassword: string
-): Promise<User> => {  // only returns User
+): Promise<User> => { 
   if (password !== confirmPassword) {
     throw { code: "password_mismatch", message: "Passwords do not match." };
   }
@@ -40,7 +40,7 @@ export const registerUser = async (
       createdAt: new Date(),
     });
 
-    return userCredentials.user; // success
+    return userCredentials.user; 
   } catch (error: any) {
     console.error("Error registering user:", error);
     throw { code: error.code || "registration_failed", message: error.message || "Failed to register user." };
