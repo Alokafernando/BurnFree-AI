@@ -47,7 +47,7 @@ Key highlights include:
 
 You can download and install **BurnFree AI** on your Android device:
 
-- **APK (Android only):** [Download APK](#)
+- **APK (Android only):** [Download APK](https://expo.dev/accounts/aloka_00/projects/BurnFree-Ai/builds/e3dc3d82-95de-4954-98af-11fde8623437)
 
 > ⚠️ The link will be updated once the APK is available or the app is published via EAS Build.
 
