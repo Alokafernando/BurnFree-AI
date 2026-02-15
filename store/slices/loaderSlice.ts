@@ -1,29 +1,29 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 interface LoaderState {
-  isLoading: boolean;
+  isLoading: boolean
 }
 
 const initialState: LoaderState = {
   isLoading: false,
-};
+}
 
 const loaderSlice = createSlice({
   name: "loader",
   initialState,
   reducers: {
     showLoader: (state) => {
-      state.isLoading = true;
+      state.isLoading = true
     },
     hideLoader: (state) => {
-      state.isLoading = false;
+      state.isLoading = false
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+      state.isLoading = action.payload
     },
   },
-});
+})
 
-export const { showLoader, hideLoader, setLoading } = loaderSlice.actions;
+export const { showLoader, hideLoader, setLoading } = loaderSlice.actions
 
-export default loaderSlice.reducer;
+export default loaderSlice.reducer

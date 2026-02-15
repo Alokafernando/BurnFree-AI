@@ -46,7 +46,7 @@ const Register = () => {
     setErrors({})
     startLoading()
     try {
-      const user = await registerUser(name, email, password, conPassword);
+      const user = await registerUser(name, email, password, conPassword)
 
       Alert.alert(
         `Welcome, ${name}! 🎉`,
@@ -54,23 +54,23 @@ const Register = () => {
         [
           { text: "OK", onPress: () => router.replace("/(auth)/login") },
         ]
-      );
+      )
     } catch (e: any) {
-      let message = "Something went wrong.";
+      let message = "Something went wrong."
 
       if (e.code === "auth/email-already-in-use") {
-        message = "This email is already registered. Try logging in instead!";
+        message = "This email is already registered. Try logging in instead!"
       } else if (e.code === "auth/invalid-email") {
-        message = "The email address is invalid. Please check and try again.";
+        message = "The email address is invalid. Please check and try again."
       } else if (e.code === "password_mismatch") {
-        message = "Passwords do not match. Please check again.";
+        message = "Passwords do not match. Please check again."
       } else if (e.message) {
-        message = e.message;
+        message = e.message
       }
 
-      Alert.alert("Registration Error", message);
+      Alert.alert("Registration Error", message)
     } finally {
-      stopLoading();
+      stopLoading()
     }
 
   }

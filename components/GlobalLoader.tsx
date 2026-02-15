@@ -1,11 +1,11 @@
-import React from "react";
-import { View, ActivityIndicator, Modal } from "react-native";
-import { useLoader } from "@/hooks/useLoader";
+import React from "react"
+import { View, ActivityIndicator, Modal } from "react-native"
+import { useLoader } from "@/hooks/useLoader"
 
 export const GlobalLoader = () => {
-  const { isLoading } = useLoader();
+  const { isLoading } = useLoader()
 
-  if (!isLoading) return null;
+  if (!isLoading) return null
 
   return (
     <Modal
@@ -20,5 +20,5 @@ export const GlobalLoader = () => {
         </View>
       </View>
     </Modal>
-  );
-};
+  )
+}

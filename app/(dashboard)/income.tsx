@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -8,54 +8,54 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Alert,
-} from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { auth } from "@/services/firebase";
+} from "react-native"
+import { FontAwesome5 } from "@expo/vector-icons"
+import { auth } from "@/services/firebase"
 
 import {
   addIncome,
   deleteIncome,
   getIncomeForUser,
   updateIncome,
-} from "@/services/incomeService";
+} from "@/services/incomeService"
 
-import { Income, IncomeType } from "@/types/Income";
+import { Income, IncomeType } from "@/types/Income"
 
 const IncomeTracker = () => {
-  const userId = auth.currentUser?.uid;
+  const userId = auth.currentUser?.uid
 
-  const [client, setClient] = useState("");
-  const [amount, setAmount] = useState("");
-  const [type, setType] = useState<IncomeType>("freelance");
+  const [client, setClient] = useState("")
+  const [amount, setAmount] = useState("")
+  const [type, setType] = useState<IncomeType>("freelance")
 
-  const [loading, setLoading] = useState(false);
-  const [incomeLogs, setIncomeLogs] = useState<Income[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false)
+  const [incomeLogs, setIncomeLogs] = useState<Income[]>([])
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   // ---------------- FETCH ----------------
   const fetchIncomeLogs = async () => {
-    const result = await getIncomeForUser();
+    const result = await getIncomeForUser()
 
     if ("code" in result) {
-      Alert.alert("Error", result.message);
+      Alert.alert("Error", result.message)
     } else {
-      setIncomeLogs(result);
+      setIncomeLogs(result)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchIncomeLogs();
-  }, []);
+    fetchIncomeLogs()
+  }, [])
 
   // ---------------- SAVE / UPDATE ----------------
   const handleSave = async () => {
     if (!client || !amount) {
-      return Alert.alert("Missing info", "Please fill all fields");
+      return Alert.alert("Missing info", "Please fill all fields")
     }
 
-    setLoading(true);
+    setLoading(true)
 
-    const date = new Date().toISOString().split("T")[0];
+    const date = new Date().toISOString().split("T")[0]
 
     const result = editingId
       ? await updateIncome(editingId, {
@@ -64,20 +64,20 @@ const IncomeTracker = () => {
         type,
         date,
       })
-      : await addIncome(client, Number(amount), type, date);
+      : await addIncome(client, Number(amount), type, date)
 
     if ("code" in result) {
-      Alert.alert("Error", result.message);
+      Alert.alert("Error", result.message)
     } else {
-      setClient("");
-      setAmount("");
-      setType("freelance");
-      setEditingId(null);
-      fetchIncomeLogs();
+      setClient("")
+      setAmount("")
+      setType("freelance")
+      setEditingId(null)
+      fetchIncomeLogs()
     }
 
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   // ---------------- DELETE ----------------
   const handleDelete = async (id: string) => {
@@ -87,23 +87,23 @@ const IncomeTracker = () => {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          const result = await deleteIncome(id);
+          const result = await deleteIncome(id)
 
           if (result !== true) {
-            Alert.alert("Error", result.message);
+            Alert.alert("Error", result.message)
           }
 
-          fetchIncomeLogs();
+          fetchIncomeLogs()
         },
       },
-    ]);
-  };
+    ])
+  }
 
   // ---------------- TOTAL ----------------
   const totalIncome = incomeLogs.reduce(
     (sum, e) => sum + e.amount,
     0
-  );
+  )
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9FAFB]">
@@ -184,10 +184,10 @@ const IncomeTracker = () => {
                 activeOpacity={0.8}
                 onPress={() => {
                   // Load into edit mode
-                  setEditingId(entry.id);
-                  setClient(entry.client);
-                  setAmount(String(entry.amount));
-                  setType(entry.type);
+                  setEditingId(entry.id)
+                  setClient(entry.client)
+                  setAmount(String(entry.amount))
+                  setType(entry.type)
                 }}
                 className="bg-white rounded-[30px] p-5 mb-4 shadow-sm border border-slate-100"
               >
@@ -247,7 +247,7 @@ const IncomeTracker = () => {
 
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default IncomeTracker;
+export default IncomeTracker

@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '../store/slices/authSlice';
-import loaderReducer from '../store/slices/loaderSlice';
+import { configureStore } from '@reduxjs/toolkit'
+import authReducer from '../store/slices/authSlice'
+import loaderReducer from '../store/slices/loaderSlice'
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +11,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
     }),
-});
+})
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

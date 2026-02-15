@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -8,72 +8,72 @@ import {
   ActivityIndicator,
   Alert,
   SafeAreaView,
-} from "react-native";
+} from "react-native"
 
-import { FontAwesome5 } from "@expo/vector-icons";
-import { auth, db } from "@/services/firebase";
-import { addWork, deleteWork, getWorkForUser, updateWork } from "@/services/workService";
+import { FontAwesome5 } from "@expo/vector-icons"
+import { auth, db } from "@/services/firebase"
+import { addWork, deleteWork, getWorkForUser, updateWork } from "@/services/workService"
 
 interface WorkEntry {
-  id: string;
-  client: string;
-  project: string;
-  hours: number;
-  date: string;
+  id: string
+  client: string
+  project: string
+  hours: number
+  date: string
 }
 
 const WorkTracker = () => {
-  const userId = auth.currentUser?.uid;
-  const [client, setClient] = useState("");
-  const [project, setProject] = useState("");
-  const [hours, setHours] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [workLogs, setWorkLogs] = useState<WorkEntry[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const userId = auth.currentUser?.uid
+  const [client, setClient] = useState("")
+  const [project, setProject] = useState("")
+  const [hours, setHours] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [workLogs, setWorkLogs] = useState<WorkEntry[]>([])
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   const fetchWorkLogs = async () => {
-    const result = await getWorkForUser();
+    const result = await getWorkForUser()
     if ("code" in result) {
-      Alert.alert("Error", result.message);
+      Alert.alert("Error", result.message)
     } else {
-      setWorkLogs(result);
+      setWorkLogs(result)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchWorkLogs();
-  }, []);
+    fetchWorkLogs()
+  }, [])
 
   const handleSave = async () => {
     if (!client || !project || !hours) {
-      return Alert.alert("Missing info", "Please fill all fields");
+      return Alert.alert("Missing info", "Please fill all fields")
     }
 
-    setLoading(true);
+    setLoading(true)
 
     const payload = {
       client,
       project,
       hours: Number(hours),
       date: new Date().toISOString().split("T")[0],
-    };
+    }
 
     const result = editingId
       ? await updateWork(editingId, payload)
-      : await addWork(client, project, Number(hours), payload.date);
+      : await addWork(client, project, Number(hours), payload.date)
 
     if ("code" in result) {
-      Alert.alert("Error", result.message);
+      Alert.alert("Error", result.message)
     } else {
-      setClient("");
-      setProject("");
-      setHours("");
-      setEditingId(null);
-      fetchWorkLogs();
+      setClient("")
+      setProject("")
+      setHours("")
+      setEditingId(null)
+      fetchWorkLogs()
     }
 
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const handleDelete = async (id: string) => {
     Alert.alert("Delete Entry", "Are you sure?", [
@@ -82,17 +82,17 @@ const WorkTracker = () => {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          const result = await deleteWork(id);
+          const result = await deleteWork(id)
           if (result !== true) {
-            Alert.alert("Error", result.message);
+            Alert.alert("Error", result.message)
           }
-          fetchWorkLogs();
+          fetchWorkLogs()
         },
       },
-    ]);
-  };
+    ])
+  }
 
-  const totalHours = workLogs.reduce((sum, e) => sum + e.hours, 0);
+  const totalHours = workLogs.reduce((sum, e) => sum + e.hours, 0)
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9FAFB]">
@@ -177,11 +177,10 @@ const WorkTracker = () => {
                 key={entry.id}
                 activeOpacity={0.8}
                 onPress={() => {
-                  // Load this entry into the input fields for editing
-                  setEditingId(entry.id);
-                  setClient(entry.client);
-                  setProject(entry.project);
-                  setHours(String(entry.hours));
+                  setEditingId(entry.id)
+                  setClient(entry.client)
+                  setProject(entry.project)
+                  setHours(String(entry.hours))
                 }}
                 className="bg-white rounded-[30px] p-5 mb-4 shadow-sm border border-slate-100"
               >
@@ -220,7 +219,7 @@ const WorkTracker = () => {
 
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default WorkTracker;
+export default WorkTracker

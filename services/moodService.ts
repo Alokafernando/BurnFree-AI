@@ -1,5 +1,5 @@
-import { Mood, MoodError, MoodLevel } from "@/types/Mood";
-import { auth, db } from "./firebase";
+import { Mood, MoodError, MoodLevel } from "@/types/Mood"
+import { auth, db } from "./firebase"
 import {
   addDoc,
   collection,
@@ -12,10 +12,10 @@ import {
   updateDoc,
   deleteDoc,
   Timestamp,
-} from "firebase/firestore";
+} from "firebase/firestore"
 
 // Collection name
-const MOODS_COLLECTION = "moods";
+const MOODS_COLLECTION = "moods"
 
 // --- CREATE ---
 export const addMood = async (
@@ -23,9 +23,9 @@ export const addMood = async (
   notes?: string
 ): Promise<Mood | MoodError> => {
   try {
-    const user = auth.currentUser;
+    const user = auth.currentUser
     if (!user) {
-      return { code: "unauthorized", message: "User not logged in." };
+      return { code: "unauthorized", message: "User not logged in." }
     }
 
     const moodData: Omit<Mood, "id"> = {
@@ -33,71 +33,71 @@ export const addMood = async (
       moodLevel: mood,
       notes,
       createdAt: Timestamp.now(),
-    };
+    }
 
-    const docRef = await addDoc(collection(db, MOODS_COLLECTION), moodData);
+    const docRef = await addDoc(collection(db, MOODS_COLLECTION), moodData)
 
-    return { id: docRef.id, ...moodData };
+    return { id: docRef.id, ...moodData }
   } catch (error: any) {
-    console.error("Add mood error:", error);
+    console.error("Add mood error:", error)
     return {
       code: error.code || "mood_add_failed",
       message: error.message || "Failed to save mood.",
-    };
+    }
   }
-};
+}
 
 // --- READ ALL (user’s moods) ---
 export const getMoodsForUser = async (): Promise<Mood[] | MoodError> => {
   try {
-    const user = auth.currentUser;
+    const user = auth.currentUser
     if (!user) {
-      return { code: "unauthorized", message: "User not logged in." };
+      return { code: "unauthorized", message: "User not logged in." }
     }
 
     const q = query(
       collection(db, MOODS_COLLECTION),
       where("userId", "==", user.uid),
       orderBy("createdAt", "desc")
-    );
+    )
 
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocs(q)
     const entries = snapshot.docs.map((docSnap) => ({
       id: docSnap.id,
       ...(docSnap.data() as Omit<Mood, "id">),
-    }));
+    }))
 
-    return entries;
+    return entries
   } catch (error: any) {
-    console.error("Get moods error:", error);
+    console.error("Get moods error:", error)
     return {
       code: error.code || "mood_fetch_failed",
       message: error.message || "Failed to retrieve moods.",
-    };
+    }
   }
-};
+}
 
 // --- READ single mood by ID ---
 export const getMoodById = async (
   id: string
 ): Promise<Mood | null | MoodError> => {
   try {
-    const docRef = doc(db, MOODS_COLLECTION, id);
-    const docSnap = await getDoc(docRef);
+    const docRef = doc(db, MOODS_COLLECTION, id)
+    const docSnap = await getDoc(docRef)
 
     if (!docSnap.exists()) {
-      return null;
+      return null
     }
 
-    return { id: docSnap.id, ...(docSnap.data() as Omit<Mood, "id">) };
+    return { id: docSnap.id, ...(docSnap.data() as Omit<Mood, "id">) }
   } catch (error: any) {
-    console.error("Get mood by ID error:", error);
+    console.error("Get mood by ID error:", error)
     return {
       code: error.code || "mood_fetch_failed",
       message: error.message || "Failed to retrieve mood by ID.",
-    };
+    }
   }
-};
+}
 
 // --- UPDATE ---
 export const updateMood = async (
@@ -105,33 +105,33 @@ export const updateMood = async (
   updates: Partial<Omit<Mood, "id" | "userId" | "createdAt">>
 ): Promise<Mood | MoodError> => {
   try {
-    const docRef = doc(db, MOODS_COLLECTION, id);
+    const docRef = doc(db, MOODS_COLLECTION, id)
 
-    await updateDoc(docRef, updates);
+    await updateDoc(docRef, updates)
 
     // Return updated document
-    const updatedSnap = await getDoc(docRef);
-    return { id: updatedSnap.id, ...(updatedSnap.data() as Omit<Mood, "id">) };
+    const updatedSnap = await getDoc(docRef)
+    return { id: updatedSnap.id, ...(updatedSnap.data() as Omit<Mood, "id">) }
   } catch (error: any) {
-    console.error("Update mood error:", error);
+    console.error("Update mood error:", error)
     return {
       code: error.code || "mood_update_failed",
       message: error.message || "Failed to update mood.",
-    };
+    }
   }
-};
+}
 
 // --- DELETE ---
 export const deleteMood = async (id: string): Promise<true | MoodError> => {
   try {
-    const docRef = doc(db, MOODS_COLLECTION, id);
-    await deleteDoc(docRef);
-    return true;
+    const docRef = doc(db, MOODS_COLLECTION, id)
+    await deleteDoc(docRef)
+    return true
   } catch (error: any) {
-    console.error("Delete mood error:", error);
+    console.error("Delete mood error:", error)
     return {
       code: error.code || "mood_delete_failed",
       message: error.message || "Failed to delete mood.",
-    };
+    }
   }
-};
+}

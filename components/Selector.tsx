@@ -1,14 +1,14 @@
-import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import React from "react"
+import { View, Text, ScrollView, TouchableOpacity } from "react-native"
 
 interface NumberSelectorProps {
-  label: string;
-  min: number;
-  max: number;
-  value: number | null;
-  onSelect: (value: number) => void;
-  activeColor?: string; // Single color for the active state
-  emojis?: string[];
+  label: string
+  min: number
+  max: number
+  value: number | null
+  onSelect: (value: number) => void
+  activeColor?: string
+  emojis?: string[]
 }
 
 const NumberSelector: React.FC<NumberSelectorProps> = ({
@@ -20,7 +20,7 @@ const NumberSelector: React.FC<NumberSelectorProps> = ({
   activeColor = "bg-teal-500",
   emojis,
 }) => {
-  const numbers = Array.from({ length: max - min + 1 }, (_, i) => i + min);
+  const numbers = Array.from({ length: max - min + 1 }, (_, i) => i + min)
 
   return (
     <View className="mb-8">
@@ -37,7 +37,7 @@ const NumberSelector: React.FC<NumberSelectorProps> = ({
         contentContainerStyle={{ paddingLeft: 4, paddingRight: 20 }}
       >
         {numbers.map((num, idx) => {
-          const isSelected = value === num;
+          const isSelected = value === num
           return (
             <TouchableOpacity
               key={num}
@@ -50,11 +50,11 @@ const NumberSelector: React.FC<NumberSelectorProps> = ({
                 {emojis?.[idx] || num}
               </Text>
             </TouchableOpacity>
-          );
+          )
         })}
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-export default NumberSelector;
+export default NumberSelector

@@ -5,23 +5,23 @@ export type AdviceType =
   | "income"
   | "productivity"
   | "wellness"
-  | "general";
+  | "general"
 
 // Advice priority
 export type AdvicePriority =
   | "low"
   | "medium"
   | "high"
-  | "critical";
+  | "critical"
 
-// AI Advice object
+// AI Advice 
 export interface AIAdvice {
-  id: string;
-  title: string;
-  message: string;
+  id: string
+  title: string
+  message: string
 
-  type: AdviceType;
-  priority: AdvicePriority;
+  type: AdviceType
+  priority: AdvicePriority
 
-  createdAt: Date;
+  createdAt: Date
 }

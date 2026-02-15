@@ -1,81 +1,81 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StatusBar } from "react-native";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import { auth, db } from "@/services/firebase";
-import { calculateBurnoutScore, BurnoutResult } from "@/services/burnoutService";
-import { generateAIAdvice } from "@/services/aiAdviceService";
-import { AIAdvice } from "@/types/aiAdvice";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react"
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StatusBar } from "react-native"
+import { collection, query, where, onSnapshot } from "firebase/firestore"
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons"
+import { auth, db } from "@/services/firebase"
+import { calculateBurnoutScore, BurnoutResult } from "@/services/burnoutService"
+import { generateAIAdvice } from "@/services/aiAdviceService"
+import { AIAdvice } from "@/types/aiAdvice"
+import { LinearGradient } from "expo-linear-gradient"
+import { useRouter } from "expo-router"
 
 interface MoodEntry {
-  mood: number;
-  stress: number;
-  sleep: number;
-  date: string;
+  mood: number
+  stress: number
+  sleep: number
+  date: string
 }
 
 interface WorkEntry {
-  hours: number;
-  date: string;
+  hours: number
+  date: string
 }
 
 interface IncomeEntry {
-  amount: number;
-  date: string;
+  amount: number
+  date: string
 }
 
 export default function Dashboard({ navigation }: any) {
-  const userId = auth.currentUser?.uid;
+  const userId = auth.currentUser?.uid
 
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
   const [burnout, setBurnout] = useState<BurnoutResult>({
     score: 0,
     level: "No Data",
     color: "#9CA3AF",
     description: "Add your first Mood or Work log to see your burnout score",
-  });
-  const [advice, setAdvice] = useState<AIAdvice[]>([]);
-  const [totalIncome, setTotalIncome] = useState(0);
-  const [workCount, setWorkCount] = useState(0);
+  })
+  const [advice, setAdvice] = useState<AIAdvice[]>([])
+  const [totalIncome, setTotalIncome] = useState(0)
+  const [workCount, setWorkCount] = useState(0)
 
-  const [moodLogs, setMoodLogs] = useState<MoodEntry[]>([]);
-  const [workLogs, setWorkLogs] = useState<WorkEntry[]>([]);
-  const [incomeLogs, setIncomeLogs] = useState<IncomeEntry[]>([]);
+  const [moodLogs, setMoodLogs] = useState<MoodEntry[]>([])
+  const [workLogs, setWorkLogs] = useState<WorkEntry[]>([])
+  const [incomeLogs, setIncomeLogs] = useState<IncomeEntry[]>([])
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) return
 
-    const moodQuery = query(collection(db, "mood_logs"), where("userId", "==", userId));
-    const workQuery = query(collection(db, "works"), where("userId", "==", userId));
-    const incomeQuery = query(collection(db, "income"), where("userId", "==", userId));
+    const moodQuery = query(collection(db, "mood_logs"), where("userId", "==", userId))
+    const workQuery = query(collection(db, "works"), where("userId", "==", userId))
+    const incomeQuery = query(collection(db, "income"), where("userId", "==", userId))
 
     const unsubscribeMoods = onSnapshot(moodQuery, snapshot => {
-      const moods = snapshot.docs.map(doc => doc.data() as MoodEntry);
-      setMoodLogs(moods);
-      setLoading(false);
-    });
+      const moods = snapshot.docs.map(doc => doc.data() as MoodEntry)
+      setMoodLogs(moods)
+      setLoading(false)
+    })
 
     const unsubscribeWorks = onSnapshot(workQuery, snapshot => {
-      const works = snapshot.docs.map(doc => doc.data() as WorkEntry);
-      setWorkLogs(works);
-      setLoading(false);
-    });
+      const works = snapshot.docs.map(doc => doc.data() as WorkEntry)
+      setWorkLogs(works)
+      setLoading(false)
+    })
 
     const unsubscribeIncome = onSnapshot(incomeQuery, snapshot => {
-      const incomes = snapshot.docs.map(doc => doc.data() as IncomeEntry);
-      setIncomeLogs(incomes);
-      setLoading(false);
-    });
+      const incomes = snapshot.docs.map(doc => doc.data() as IncomeEntry)
+      setIncomeLogs(incomes)
+      setLoading(false)
+    })
 
     return () => {
-      unsubscribeMoods();
-      unsubscribeWorks();
-      unsubscribeIncome();
-    };
-  }, [userId]);
+      unsubscribeMoods()
+      unsubscribeWorks()
+      unsubscribeIncome()
+    }
+  }, [userId])
 
   // Recalculate burnout and AI advice whenever logs change
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function Dashboard({ navigation }: any) {
         level: "No Data",
         color: "#9CA3AF",
         description: "Add your first Mood or Work log to see your burnout score",
-      });
+      })
       setAdvice([
         {
           id: "no_data",
@@ -95,31 +95,31 @@ export default function Dashboard({ navigation }: any) {
           priority: "low",
           createdAt: new Date(),
         },
-      ]);
-      setTotalIncome(incomeLogs.reduce((a, b) => a + b.amount, 0));
-      setWorkCount(workLogs.length);
-      return;
+      ])
+      setTotalIncome(incomeLogs.reduce((a, b) => a + b.amount, 0))
+      setWorkCount(workLogs.length)
+      return
     }
 
-    const avgMood = moodLogs.length ? moodLogs.reduce((a, b) => a + b.mood, 0) / moodLogs.length : 5;
-    const avgStress = moodLogs.length ? moodLogs.reduce((a, b) => a + b.stress, 0) / moodLogs.length : 5;
-    const avgSleep = moodLogs.length ? moodLogs.reduce((a, b) => a + b.sleep, 0) / moodLogs.length : 7;
-    const avgWorkHours = workLogs.length ? workLogs.reduce((a, b) => a + b.hours, 0) / workLogs.length : 8;
-    const total = incomeLogs.reduce((a, b) => a + b.amount, 0);
+    const avgMood = moodLogs.length ? moodLogs.reduce((a, b) => a + b.mood, 0) / moodLogs.length : 5
+    const avgStress = moodLogs.length ? moodLogs.reduce((a, b) => a + b.stress, 0) / moodLogs.length : 5
+    const avgSleep = moodLogs.length ? moodLogs.reduce((a, b) => a + b.sleep, 0) / moodLogs.length : 7
+    const avgWorkHours = workLogs.length ? workLogs.reduce((a, b) => a + b.hours, 0) / workLogs.length : 8
+    const total = incomeLogs.reduce((a, b) => a + b.amount, 0)
 
-    const burnoutResult = calculateBurnoutScore({ avgMood, avgStress, avgSleep, avgWorkHours });
-    setBurnout(burnoutResult);
-    setAdvice(generateAIAdvice(burnoutResult, total, avgMood, avgWorkHours));
-    setTotalIncome(total);
-    setWorkCount(workLogs.length);
-  }, [moodLogs, workLogs, incomeLogs]);
+    const burnoutResult = calculateBurnoutScore({ avgMood, avgStress, avgSleep, avgWorkHours })
+    setBurnout(burnoutResult)
+    setAdvice(generateAIAdvice(burnoutResult, total, avgMood, avgWorkHours))
+    setTotalIncome(total)
+    setWorkCount(workLogs.length)
+  }, [moodLogs, workLogs, incomeLogs])
 
   if (loading)
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#0D9488" />
       </View>
-    );
+    )
 
   return (
     <View className="flex-1 bg-white">
@@ -191,7 +191,7 @@ export default function Dashboard({ navigation }: any) {
         </View>
       </ScrollView>
     </View>
-  );
+  )
 }
 
 // --- Components ---
@@ -203,7 +203,7 @@ const SmallStatCard = ({ icon, label, value }: any) => (
     <Text className="text-slate-400 font-black text-[10px] uppercase tracking-[1px]">{label}</Text>
     <Text className="text-xl font-black text-slate-900 tracking-tighter">{value}</Text>
   </View>
-);
+)
 
 const QuickActionBtn = ({ icon, label, onPress }: any) => (
   <TouchableOpacity
@@ -216,4 +216,4 @@ const QuickActionBtn = ({ icon, label, onPress }: any) => (
     </View>
     <Text className="text-slate-900 font-black mt-3 text-[10px] uppercase tracking-wider">{label}</Text>
   </TouchableOpacity>
-);
+)

@@ -18,7 +18,7 @@ const Index = () => {
     )
   }
 
-  return user ? <Redirect href="/home" /> : <Redirect href="/login" />;
+  return user ? <Redirect href="/home" /> : <Redirect href="/login" />
 }
 
 export default Index

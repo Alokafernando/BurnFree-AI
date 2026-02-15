@@ -6,83 +6,81 @@ import {
   Alert,
   ActivityIndicator,
   Image,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import * as ImagePicker from "expo-image-picker";
-import { auth } from "@/services/firebase";
-import { updateUserProfileImage } from "@/services/userService";
-import { useState, useEffect } from "react";
-import { uploadImageToCloudinary } from "@/config/upload";
-import { signOut } from "firebase/auth";
+} from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { useRouter } from "expo-router"
+import * as ImagePicker from "expo-image-picker"
+import { auth } from "@/services/firebase"
+import { updateUserProfileImage } from "@/services/userService"
+import { useState, useEffect } from "react"
+import { uploadImageToCloudinary } from "@/config/upload"
+import { signOut } from "firebase/auth"
 
 export default function Profile() {
-  const router = useRouter();
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
+  const router = useRouter()
+  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
 
-  const user = auth.currentUser;
+  const user = auth.currentUser
 
-  // Reload user info and set profile image on mount
   useEffect(() => {
     const reloadUser = async () => {
-      await auth.currentUser?.reload();
-      setProfileImage(auth.currentUser?.photoURL || null);
-    };
-    reloadUser();
-  }, []);
+      await auth.currentUser?.reload()
+      setProfileImage(auth.currentUser?.photoURL || null)
+    }
+    reloadUser()
+  }, [])
 
-  // Logout handler
   const handleLogout = async () => {
     try {
-      setLoggingOut(true);
-      await signOut(auth);
-      router.replace("/login"); // your login route
+      setLoggingOut(true)
+      await signOut(auth)
+      router.replace("/login")
     } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Failed to log out");
+      console.error(err)
+      Alert.alert("Error", "Failed to log out")
     } finally {
-      setLoggingOut(false);
+      setLoggingOut(false)
     }
-  };
+  }
 
-  // Request media permissions
+  // permissions
   const requestMediaPermission = async (fromCamera: boolean): Promise<boolean> => {
     try {
-      let status;
+      let status
       if (fromCamera) {
-        const result = await ImagePicker.getCameraPermissionsAsync();
-        status = result.status;
+        const result = await ImagePicker.getCameraPermissionsAsync()
+        status = result.status
         if (status !== "granted") {
-          Alert.alert("Camera Permission Needed", "We need access to your camera to take a profile picture.", [{ text: "OK" }]);
-          const newResult = await ImagePicker.requestCameraPermissionsAsync();
-          status = newResult.status;
+          Alert.alert("Camera Permission Needed", "We need access to your camera to take a profile picture.", [{ text: "OK" }])
+          const newResult = await ImagePicker.requestCameraPermissionsAsync()
+          status = newResult.status
         }
       } else {
-        const result = await ImagePicker.getMediaLibraryPermissionsAsync();
-        status = result.status;
+        const result = await ImagePicker.getMediaLibraryPermissionsAsync()
+        status = result.status
         if (status !== "granted") {
-          Alert.alert("Media Library Permission Needed", "We need access to your photo library to select a profile picture.", [{ text: "OK" }]);
-          const newResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          status = newResult.status;
+          Alert.alert("Media Library Permission Needed", "We need access to your photo library to select a profile picture.", [{ text: "OK" }])
+          const newResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+          status = newResult.status
         }
       }
-      return status === "granted";
+      return status === "granted"
     } catch (err) {
-      console.error(err);
-      return false;
+      console.error(err)
+      return false
     }
-  };
+  }
 
   // Pick image from camera or gallery
   const handleImagePick = async (fromCamera: boolean) => {
-    const allowed = await requestMediaPermission(fromCamera);
-    if (!allowed) return;
+    const allowed = await requestMediaPermission(fromCamera)
+    if (!allowed) return
 
     try {
-      setUploading(true);
+      setUploading(true)
 
       const result = fromCamera
         ? await ImagePicker.launchCameraAsync({
@@ -92,29 +90,29 @@ export default function Profile() {
         : await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images as any,
             quality: 0.7,
-          });
+          })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const cloudUrl = await uploadImageToCloudinary(result.assets[0].uri);
+        const cloudUrl = await uploadImageToCloudinary(result.assets[0].uri)
 
         // Use new method to update Firestore and Auth
         if (auth.currentUser) {
-          const success = await updateUserProfileImage(auth.currentUser.uid, cloudUrl);
+          const success = await updateUserProfileImage(auth.currentUser.uid, cloudUrl)
           if (success) {
-            setProfileImage(cloudUrl);
-            Alert.alert("Success", "Profile picture updated!");
+            setProfileImage(cloudUrl)
+            Alert.alert("Success", "Profile picture updated!")
           } else {
-            Alert.alert("Error", "Failed to update profile image");
+            Alert.alert("Error", "Failed to update profile image")
           }
         }
       }
     } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Failed to update profile image");
+      console.error(err)
+      Alert.alert("Error", "Failed to update profile image")
     } finally {
-      setUploading(false);
+      setUploading(false)
     }
-  };
+  }
 
   return (
     <View className="flex-1 bg-white">
@@ -151,7 +149,7 @@ export default function Profile() {
                   { text: "Camera", onPress: () => handleImagePick(true) },
                   { text: "Gallery", onPress: () => handleImagePick(false) },
                   { text: "Cancel", style: "cancel" },
-                ]);
+                ])
               }}
             >
               <MaterialCommunityIcons name="pencil" size={12} color="white" />
@@ -200,7 +198,7 @@ export default function Profile() {
         </View>
       </ScrollView>
     </View>
-  );
+  )
 }
 
 // Sub-components
@@ -209,7 +207,7 @@ const StatItem = ({ value, label }: any) => (
     <Text className="text-teal-600 font-black text-xl">{value}</Text>
     <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">{label}</Text>
   </View>
-);
+)
 
 const MenuButton = ({ icon, title, color, onPress }: any) => (
   <TouchableOpacity onPress={onPress} className="flex-row items-center justify-between p-4">
@@ -221,4 +219,4 @@ const MenuButton = ({ icon, title, color, onPress }: any) => (
     </View>
     <MaterialCommunityIcons name="chevron-right" size={22} color="#cbd5e1" />
   </TouchableOpacity>
-);
+)

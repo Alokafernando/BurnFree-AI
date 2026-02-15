@@ -1,5 +1,5 @@
-import { Work, WorkError } from "@/types/Work";
-import { auth, db } from "./firebase";
+import { Work, WorkError } from "@/types/Work"
+import { auth, db } from "./firebase"
 import {
     addDoc,
     collection,
@@ -12,10 +12,9 @@ import {
     updateDoc,
     deleteDoc,
     Timestamp,
-} from "firebase/firestore";
+} from "firebase/firestore"
 
-// Collection name
-const WORK_COLLECTION = "works";
+const WORK_COLLECTION = "works"
 
 // --- CREATE ---
 export const addWork = async (
@@ -25,9 +24,9 @@ export const addWork = async (
     date: string
 ): Promise<Work | WorkError> => {
     try {
-        const user = auth.currentUser;
+        const user = auth.currentUser
         if (!user) {
-            return { code: "unauthorized", message: "User not logged in." };
+            return { code: "unauthorized", message: "User not logged in." }
         }
 
         const workData: Omit<Work, "id"> = {
@@ -37,68 +36,68 @@ export const addWork = async (
             hours,
             date,
             createdAt: Timestamp.now(),
-        };
+        }
 
-        const docRef = await addDoc(collection(db, WORK_COLLECTION), workData);
+        const docRef = await addDoc(collection(db, WORK_COLLECTION), workData)
 
-        return { id: docRef.id, ...workData };
+        return { id: docRef.id, ...workData }
     } catch (error: any) {
-        console.error("Add work error:", error);
+        console.error("Add work error:", error)
         return {
             code: error.code || "work_add_failed",
             message: error.message || "Failed to save work entry.",
-        };
+        }
     }
-};
+}
 
 // --- READ ALL (user’s work logs) ---
 export const getWorkForUser = async (): Promise<Work[] | WorkError> => {
     try {
-        const user = auth.currentUser;
+        const user = auth.currentUser
         if (!user) {
-            return { code: "unauthorized", message: "User not logged in." };
+            return { code: "unauthorized", message: "User not logged in." }
         }
 
         const q = query(
             collection(db, WORK_COLLECTION),
             where("userId", "==", user.uid),
             orderBy("createdAt", "desc")
-        );
+        )
 
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(q)
 
         return snapshot.docs.map((docSnap) => ({
             id: docSnap.id,
             ...(docSnap.data() as Omit<Work, "id">),
-        }));
+        }))
     } catch (error: any) {
-        console.error("Get work error:", error);
+        console.error("Get work error:", error)
         return {
             code: error.code || "work_fetch_failed",
             message: error.message || "Failed to retrieve work logs.",
-        };
+        }
     }
-};
+}
 
 // --- READ single work by ID ---
 export const getWorkById = async (
     id: string
 ): Promise<Work | null | WorkError> => {
     try {
-        const docRef = doc(db, WORK_COLLECTION, id);
-        const docSnap = await getDoc(docRef);
+        const docRef = doc(db, WORK_COLLECTION, id)
+        const docSnap = await getDoc(docRef)
 
-        if (!docSnap.exists()) return null;
+        if (!docSnap.exists()) return null
 
-        return { id: docSnap.id, ...(docSnap.data() as Omit<Work, "id">) };
+        return { id: docSnap.id, ...(docSnap.data() as Omit<Work, "id">) }
     } catch (error: any) {
-        console.error("Get work by ID error:", error);
+        console.error("Get work by ID error:", error)
         return {
             code: error.code || "work_fetch_failed",
             message: error.message || "Failed to retrieve work entry.",
-        };
+        }
     }
-};
+}
 
 // --- UPDATE ---
 export const updateWork = async (
@@ -106,31 +105,31 @@ export const updateWork = async (
     updates: Partial<Omit<Work, "id" | "userId" | "createdAt">>
 ): Promise<Work | WorkError> => {
     try {
-        const docRef = doc(db, WORK_COLLECTION, id);
-        await updateDoc(docRef, updates);
+        const docRef = doc(db, WORK_COLLECTION, id)
+        await updateDoc(docRef, updates)
 
-        const updatedSnap = await getDoc(docRef);
-        return { id: updatedSnap.id, ...(updatedSnap.data() as Omit<Work, "id">) };
+        const updatedSnap = await getDoc(docRef)
+        return { id: updatedSnap.id, ...(updatedSnap.data() as Omit<Work, "id">) }
     } catch (error: any) {
-        console.error("Update work error:", error);
+        console.error("Update work error:", error)
         return {
             code: error.code || "work_update_failed",
             message: error.message || "Failed to update work entry.",
-        };
+        }
     }
-};
+}
 
 // --- DELETE ---
 export const deleteWork = async (id: string): Promise<true | WorkError> => {
     try {
-        const docRef = doc(db, WORK_COLLECTION, id);
-        await deleteDoc(docRef);
-        return true;
+        const docRef = doc(db, WORK_COLLECTION, id)
+        await deleteDoc(docRef)
+        return true
     } catch (error: any) {
-        console.error("Delete work error:", error);
+        console.error("Delete work error:", error)
         return {
             code: error.code || "work_delete_failed",
             message: error.message || "Failed to delete work entry.",
-        };
+        }
     }
-};
+}

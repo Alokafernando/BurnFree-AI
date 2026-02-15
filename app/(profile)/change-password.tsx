@@ -1,55 +1,55 @@
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, StatusBar } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { useRouter } from "expo-router";
-import { changePasswordWithCurrent } from "@/services/authService";
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, StatusBar } from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { useState } from "react"
+import { useRouter } from "expo-router"
+import { changePasswordWithCurrent } from "@/services/authService"
 
 export default function ChangePassword() {
-  const router = useRouter();
+  const router = useRouter()
 
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      Alert.alert("Error", "All fields are required");
-      return;
+      Alert.alert("Error", "All fields are required")
+      return
     }
 
     if (newPassword.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
-      return;
+      Alert.alert("Error", "Password must be at least 6 characters")
+      return
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
-      return;
+      Alert.alert("Error", "Passwords do not match")
+      return
     }
 
     try {
-      setLoading(true);
-      await changePasswordWithCurrent(currentPassword, newPassword);
+      setLoading(true)
+      await changePasswordWithCurrent(currentPassword, newPassword)
 
       Alert.alert("Success", "Password updated successfully", [
         { text: "OK", onPress: () => router.replace("/(dashboard)/profile") },
-      ]);
+      ])
     } catch (error: any) {
-      console.log("Change password error:", error);
+      console.log("Change password error:", error)
 
       if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-        Alert.alert("Error", "Current password is incorrect");
+        Alert.alert("Error", "Current password is incorrect")
       } else if (error.code === "auth/requires-recent-login") {
-        Alert.alert("Session Expired", "Please log in again and retry");
+        Alert.alert("Session Expired", "Please log in again and retry")
       } else {
-        Alert.alert("Error", "Failed to update password. Try again.");
+        Alert.alert("Error", "Failed to update password. Try again.")
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <View className="flex-1 bg-white">
@@ -153,5 +153,5 @@ export default function ChangePassword() {
         </View>
       </View>
     </View>
-  );
+  )
 }

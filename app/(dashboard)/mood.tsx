@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import {
   View,
   Text,
@@ -11,14 +11,14 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
-import { Feather, FontAwesome5 } from "@expo/vector-icons";
-import moment from "moment";
-import { auth, db } from "@/services/firebase";
+} from "react-native"
+import { Feather, FontAwesome5 } from "@expo/vector-icons"
+import moment from "moment"
+import { auth, db } from "@/services/firebase"
 import {
   collection, addDoc, getDocs, query, where,
   orderBy, deleteDoc, updateDoc, doc,
-} from "firebase/firestore";
+} from "firebase/firestore"
 
 // --- Constants ---
 const moodOptions = [
@@ -27,62 +27,62 @@ const moodOptions = [
   { val: 6, emoji: "😐", label: "Okay" },
   { val: 8, emoji: "🙂", label: "Good" },
   { val: 10, emoji: "🤩", label: "Great" },
-];
+]
 
 const stressOptions = [
   { val: 2, emoji: "🧘", label: "Zen" },
   { val: 5, emoji: "⚖️", label: "Mild" },
   { val: 8, emoji: "😰", label: "High" },
   { val: 10, emoji: "🔥", label: "Extreme" },
-];
+]
 
 const MoodLogger = () => {
-  const [mood, setMood] = useState<number | null>(null);
-  const [stress, setStress] = useState<number | null>(null);
-  const [sleep, setSleep] = useState<number>(8);
-  const [notes, setNotes] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [history, setHistory] = useState<any[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [mood, setMood] = useState<number | null>(null)
+  const [stress, setStress] = useState<number | null>(null)
+  const [sleep, setSleep] = useState<number>(8)
+  const [notes, setNotes] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [history, setHistory] = useState<any[]>([])
+  const [editingId, setEditingId] = useState<string | null>(null)
 
-  const userId = auth.currentUser?.uid;
+  const userId = auth.currentUser?.uid
 
   const fetchHistory = async () => {
-    if (!userId) return;
+    if (!userId) return
     try {
-      const q = query(collection(db, "mood_logs"), where("userId", "==", userId), orderBy("date", "desc"));
-      const snapshot = await getDocs(q);
-      setHistory(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (e) { console.error(e); }
-  };
+      const q = query(collection(db, "mood_logs"), where("userId", "==", userId), orderBy("date", "desc"))
+      const snapshot = await getDocs(q)
+      setHistory(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    } catch (e) { console.error(e) }
+  }
 
-  useEffect(() => { fetchHistory(); }, []);
+  useEffect(() => { fetchHistory() }, [])
 
   const handleSave = async () => {
-    if (!userId || !mood || !stress) return Alert.alert("Wait!", "Please select Mood and Stress.");
-    setLoading(true);
+    if (!userId || !mood || !stress) return Alert.alert("Wait!", "Please select Mood and Stress.")
+    setLoading(true)
     try {
-      const payload = { userId, mood, stress, sleep, notes, date: moment().format("YYYY-MM-DD") };
+      const payload = { userId, mood, stress, sleep, notes, date: moment().format("YYYY-MM-DD") }
 
       if (editingId) {
-        await updateDoc(doc(db, "mood_logs", editingId), payload);
+        await updateDoc(doc(db, "mood_logs", editingId), payload)
       } else {
-        await addDoc(collection(db, "mood_logs"), payload);
+        await addDoc(collection(db, "mood_logs"), payload)
       }
 
-      setMood(null);
-      setStress(null);
-      setSleep(8);
-      setNotes("");
-      setEditingId(null);
+      setMood(null)
+      setStress(null)
+      setSleep(8)
+      setNotes("")
+      setEditingId(null)
 
-      fetchHistory();
+      fetchHistory()
     } catch (e) {
-      Alert.alert("Error", "Save failed.");
+      Alert.alert("Error", "Save failed.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
 
   const handleDelete = (id: string) => {
@@ -90,12 +90,12 @@ const MoodLogger = () => {
       { text: "Cancel" },
       {
         text: "Delete", style: "destructive", onPress: async () => {
-          await deleteDoc(doc(db, "mood_logs", id));
-          fetchHistory();
+          await deleteDoc(doc(db, "mood_logs", id))
+          fetchHistory()
         }
       },
-    ]);
-  };
+    ])
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9FF]">
@@ -182,17 +182,17 @@ const MoodLogger = () => {
             <Text className="text-2xl font-black text-slate-900 mb-6">Your Journey</Text>
 
             {history.map((item) => {
-              const moodIcon = moodOptions.find(m => m.val === item.mood) || moodOptions[2];
+              const moodIcon = moodOptions.find(m => m.val === item.mood) || moodOptions[2]
               return (
                 <TouchableOpacity
                   key={item.id}
                   activeOpacity={0.8}
                   onPress={() => {
-                    setEditingId(item.id);
-                    setMood(item.mood);
-                    setStress(item.stress);
-                    setSleep(item.sleep);
-                    setNotes(item.notes);
+                    setEditingId(item.id)
+                    setMood(item.mood)
+                    setStress(item.stress)
+                    setSleep(item.sleep)
+                    setNotes(item.notes)
                   }}
                   className="bg-white rounded-[30px] p-5 mb-4 shadow-sm border border-slate-100"
                 >
@@ -226,14 +226,14 @@ const MoodLogger = () => {
                     </View>
                   ) : null}
                 </TouchableOpacity>
-              );
+              )
             })}
           </View>
 
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default MoodLogger;
+export default MoodLogger

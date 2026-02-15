@@ -1,39 +1,39 @@
-import { View, Text, TextInput, TouchableOpacity, Image, Alert, ActivityIndicator, StatusBar } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { useRouter } from "expo-router";
-import { auth } from "@/services/firebase";
-import { updateUserProfile } from "@/services/userService";
+import { View, Text, TextInput, TouchableOpacity, Image, Alert, ActivityIndicator, StatusBar } from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { useState } from "react"
+import { useRouter } from "expo-router"
+import { auth } from "@/services/firebase"
+import { updateUserProfile } from "@/services/userService"
 
 export default function AccountInformation() {
-  const router = useRouter();
-  const user = auth.currentUser;
+  const router = useRouter()
+  const user = auth.currentUser
 
-  const [username, setUsername] = useState(""); 
-  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleUpdateUsername = async () => {
     if (!username.trim()) {
-      Alert.alert("Error", "Username cannot be empty");
-      return;
+      Alert.alert("Error", "Username cannot be empty")
+      return
     }
 
     try {
-      setLoading(true);
-      const success = await updateUserProfile(user!.uid, { name: username });
+      setLoading(true)
+      const success = await updateUserProfile(user!.uid, { name: username })
       if (success) {
-        Alert.alert("Success", "Username updated successfully");
+        Alert.alert("Success", "Username updated successfully")
       } else {
-        Alert.alert("Error", "Failed to update username");
+        Alert.alert("Error", "Failed to update username")
       }
     } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Something went wrong");
+      console.error(err)
+      Alert.alert("Error", "Something went wrong")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <View className="flex-1 bg-white">
@@ -124,5 +124,5 @@ export default function AccountInformation() {
         </Text>
       </View>
     </View>
-  );
+  )
 }

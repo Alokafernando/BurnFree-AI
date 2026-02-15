@@ -1,25 +1,25 @@
 
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore"
 
 export type IncomeType =
   | "salary"
   | "freelance"
   | "business"
   | "investment"
-  | "other";
+  | "other"
 
 
 export interface Income {
-  id: string;
-  userId: string;
-  client: string;
-  amount: number;
-  type: IncomeType;
-  date: string;
-  createdAt: Timestamp;
+  id: string
+  userId: string
+  client: string
+  amount: number
+  type: IncomeType
+  date: string
+  createdAt: Timestamp
 }
 
 export interface IncomeError {
-  code: string;
-  message: string;
+  code: string
+  message: string
 }

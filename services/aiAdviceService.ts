@@ -1,5 +1,5 @@
-import { AIAdvice } from "@/types/aiAdvice";
-import { BurnoutResult } from "@/types/burnout";
+import { AIAdvice } from "@/types/aiAdvice"
+import { BurnoutResult } from "@/types/burnout"
 
 export const generateAIAdvice = (
   burnout: BurnoutResult,
@@ -7,7 +7,7 @@ export const generateAIAdvice = (
   avgMood: number,
   avgWorkHours: number
 ): AIAdvice[] => {
-  const adviceList: AIAdvice[] = [];
+  const adviceList: AIAdvice[] = []
 
   // Burnout Advice
   if (burnout.score >= 75) {
@@ -18,7 +18,7 @@ export const generateAIAdvice = (
       type: "burnout",
       priority: "critical",
       createdAt: new Date(),
-    });
+    })
   } 
   else if (burnout.score >= 50) {
     adviceList.push({
@@ -28,7 +28,7 @@ export const generateAIAdvice = (
       type: "burnout",
       priority: "high",
       createdAt: new Date(),
-    });
+    })
   } 
   else if (burnout.score >= 25) {
     adviceList.push({
@@ -38,7 +38,7 @@ export const generateAIAdvice = (
       type: "burnout",
       priority: "medium",
       createdAt: new Date(),
-    });
+    })
   } 
   else {
     adviceList.push({
@@ -48,7 +48,7 @@ export const generateAIAdvice = (
       type: "wellness",
       priority: "low",
       createdAt: new Date(),
-    });
+    })
   }
 
   // Income Advice
@@ -60,7 +60,7 @@ export const generateAIAdvice = (
       type: "income",
       priority: "high",
       createdAt: new Date(),
-    });
+    })
   } 
   else if (totalIncome < 3000) {
     adviceList.push({
@@ -70,7 +70,7 @@ export const generateAIAdvice = (
       type: "income",
       priority: "medium",
       createdAt: new Date(),
-    });
+    })
   } 
   else {
     adviceList.push({
@@ -80,7 +80,7 @@ export const generateAIAdvice = (
       type: "income",
       priority: "low",
       createdAt: new Date(),
-    });
+    })
   }
 
   // Mood Advice
@@ -92,7 +92,7 @@ export const generateAIAdvice = (
       type: "wellness",
       priority: "high",
       createdAt: new Date(),
-    });
+    })
   }
 
   // Workload Advice
@@ -107,5 +107,5 @@ export const generateAIAdvice = (
     });
   }
 
-  return adviceList;
-};
+  return adviceList
+}
